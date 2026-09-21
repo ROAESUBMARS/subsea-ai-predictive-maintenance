@@ -2,16 +2,63 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300f2fe' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='12 2 2 7 12 12 22 7 12 2'/><polyline points='2 17 12 22 22 17'/><polyline points='2 12 12 17 22 12'/></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SubseaGuard AI | Deepwater Predictive Maintenance & Digital Twin</title>
-    <meta name="description" content="AI-driven predictive maintenance and digital twin operations platform for subsea oil, gas and ocean energy production systems." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    
+    <!-- Primary Page Title & SEO Meta -->
+    <title>SubseaGuard AI | Deepwater Predictive Maintenance & Digital Twin Operations</title>
+    <meta name="description" content="SubseaGuard AI is an industrial digital twin and predictive maintenance platform for deepwater subsea production systems. Features real-time multi-sensor telemetry, RUL prognostics, early acoustic leak detection, and condition-based inspection ROI." />
+    <meta name="keywords" content="subsea, predictive maintenance, digital twin, oil and gas, flowline integrity, steel catenary riser, acoustic leak detection, DNV-RP-F116, API 17D, offshore robotics" />
+    <meta name="author" content="Oluwatobiloba Smithson" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://subsea-ai-predictive-maintenance.vercel.app/" />
+    <meta property="og:title" content="SubseaGuard AI | Deepwater Predictive Maintenance & Digital Twin" />
+    <meta property="og:description" content="Industrial digital twin and AI-driven predictive maintenance platform for subsea flowlines, risers, and manifolds. Real-time telemetry, RUL prognostics, and automated ROV dispatch." />
+    <meta property="og:image" content="/favicon.svg" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SubseaGuard AI | Deepwater Predictive Maintenance Platform" />
+    <meta name="twitter:description" content="AI-driven subsea digital twin with physics-informed failure prognostics and automated ROV deployment authorization." />
+    <meta name="twitter:image" content="/favicon.svg" />
+
+    <!-- Google Fonts: Sora (Display/KPIs), DM Sans (Body/Labels), JetBrains Mono (Tabular Numerals) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CDN for responsive utilities -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              heading: ['Sora', 'sans-serif'],
+              sans: ['DM Sans', 'sans-serif'],
+              mono: ['JetBrains Mono', 'monospace'],
+            },
+            colors: {
+              surface: {
+                base: '#0a0e17',
+                card: '#131b2e',
+                raised: '#1a243d',
+              },
+              status: {
+                critical: '#ef4444',
+                warning: '#f59e0b',
+                nominal: '#10b981',
+                offline: '#64748b',
+              }
+            }
+          }
+        }
+      }
+    </script>
   </head>
-  <body class="bg-ocean-dark text-slate-100 antialiased selection:bg-cyan-500 selection:text-white">
+  <body class="bg-[#080d1a] text-slate-100 font-sans antialiased selection:bg-cyan-500 selection:text-white">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

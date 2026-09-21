@@ -1,30 +1,44 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import Navbar from './components/Navbar';
 import KPIHeader from './components/KPIHeader';
-import IndustrialControlRoomDashboard from './components/IndustrialControlRoomDashboard';
-import FlowlineRiserIntegrityHub from './components/FlowlineRiserIntegrityHub';
-import DigitalTwinHub from './components/DigitalTwinHub';
-import ROVDeploymentHub from './components/ROVDeploymentHub';
-import FaultClassificationPanel from './components/FaultClassificationPanel';
-import FlowAssuranceOptimizer from './components/FlowAssuranceOptimizer';
-import CorrosionErosionPrognostics from './components/CorrosionErosionPrognostics';
-import RiserFatigueStructuralHealth from './components/RiserFatigueStructuralHealth';
-import EarlyLeakDetectionHub from './components/EarlyLeakDetectionHub';
-import AlertingAndEscalationHub from './components/AlertingAndEscalationHub';
-import ConditionBasedInspectionROI from './components/ConditionBasedInspectionROI';
 import RoleViewsContainer from './components/RoleViewsContainer';
-import AssetDetailModal from './components/AssetDetailModal';
-import ReportGeneratorModal from './components/ReportGeneratorModal';
-import ArchitectureModal from './components/ArchitectureModal';
-import { telemetryEngine, SIMULATION_SCENARIOS, ASSET_DEFINITIONS } from './services/telemetryEngine';
+import { telemetryEngine, SIMULATION_SCENARIOS, ASSET_DEFINITIONS, SEABED_DEPTH_M } from './services/telemetryEngine';
+
+// Code-splitting via React.lazy for performance (reduces first paint initial bundle)
+const IndustrialControlRoomDashboard = lazy(() => import('./components/IndustrialControlRoomDashboard'));
+const FlowlineRiserIntegrityHub = lazy(() => import('./components/FlowlineRiserIntegrityHub'));
+const DigitalTwinHub = lazy(() => import('./components/DigitalTwinHub'));
+const ROVDeploymentHub = lazy(() => import('./components/ROVDeploymentHub'));
+const FaultClassificationPanel = lazy(() => import('./components/FaultClassificationPanel'));
+const FlowAssuranceOptimizer = lazy(() => import('./components/FlowAssuranceOptimizer'));
+const CorrosionErosionPrognostics = lazy(() => import('./components/CorrosionErosionPrognostics'));
+const RiserFatigueStructuralHealth = lazy(() => import('./components/RiserFatigueStructuralHealth'));
+const EarlyLeakDetectionHub = lazy(() => import('./components/EarlyLeakDetectionHub'));
+const AlertingAndEscalationHub = lazy(() => import('./components/AlertingAndEscalationHub'));
+const ConditionBasedInspectionROI = lazy(() => import('./components/ConditionBasedInspectionROI'));
+const AssetDetailModal = lazy(() => import('./components/AssetDetailModal'));
+const ReportGeneratorModal = lazy(() => import('./components/ReportGeneratorModal'));
+const ArchitectureModal = lazy(() => import('./components/ArchitectureModal'));
+
+function HubLoadingFallback() {
+  return (
+    <div className="flex flex-col items-center justify-center p-16 min-h-[380px] space-y-3 font-sans">
+      <div className="w-8 h-8 rounded-full border-2 border-cyan-400/20 border-t-cyan-400 animate-spin" />
+      <span className="text-xs text-slate-400 font-mono tracking-wide">
+        Synchronizing subsea telemetry stream...
+      </span>
+    </div>
+  );
+}
 
 export default function App() {
   const [latestData, setLatestData] = useState(() => telemetryEngine.getLatestData());
   const [selectedAssetId, setSelectedAssetId] = useState('PFL-101');
-  const [activeTab, setActiveTab] = useState('control-room'); // Default to 5-Zone Industrial Dashboard
-  const [userRole, setUserRole] = useState('engineer'); // 'technician' | 'engineer' | 'manager'
+  const [activeTab, setActiveTab] = useState('control-room');
+  const [userRole, setUserRole] = useState('engineer'); // 'technician' | 'engineer' | 'subsea_engineer' | 'manager'
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentScenario, setCurrentScenario] = useState('NORMAL');
+  const [selectedKP, setSelectedKP] = useState(null); // Cross-filter state for bathymetric KP post
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [isArchitectureOpen, setIsArchitectureOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -94,18 +108,16 @@ export default function App() {
   };
 
   let unacknowledgedCount = 0;
-  if (latestData?.assets) {
-    Object.values(latestData.assets).forEach(a => {
-      if (a.status === 'CRITICAL' || a.status === 'WARNING') {
-        unacknowledgedCount++;
-      }
-    });
+  if (latestData?.activeAlerts) {
+    unacknowledgedCount = latestData.activeAlerts.filter(a => !a.acknowledged && (a.severity === 'CRITICAL' || a.severity === 'WARNING')).length;
   }
 
+  const isSimulationActive = currentScenario !== 'NORMAL';
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#0a0e17] text-slate-100 selection:bg-cyan-500 selection:text-black">
+    <div className="min-h-screen flex flex-col bg-[#080d1a] text-slate-100 font-sans selection:bg-cyan-500 selection:text-black">
       
-      {/* Top Operations Navbar with Segmented Control & Role Switcher */}
+      {/* Top Operations Sticky Navbar */}
       <Navbar
         currentScenario={currentScenario}
         onSelectScenario={handleScenarioChange}
@@ -120,18 +132,41 @@ export default function App() {
         unacknowledgedAlertsCount={unacknowledgedCount}
         userRole={userRole}
         onSelectRole={setUserRole}
+        latestData={latestData}
       />
 
+      {/* Simulation Mode Active Banner */}
+      {isSimulationActive && (
+        <div className="demo-hatched-banner px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs font-sans text-amber-200">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping" />
+            <div>
+              <span className="font-bold text-amber-300">Simulation mode active:</span>{' '}
+              Injected scenario <span className="font-mono font-bold text-white bg-amber-500/20 px-1.5 py-0.5 rounded border border-amber-400/40">
+                {SIMULATION_SCENARIOS[currentScenario]?.name || currentScenario}
+              </span>{' '}
+              — Synthetic telemetry generated for validation. Live field instrumentation remains untouched.
+            </div>
+          </div>
+          <button
+            onClick={() => handleScenarioChange('NORMAL')}
+            className="px-3 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/60 text-amber-300 text-xs font-bold font-sans transition-all flex items-center gap-1.5"
+          >
+            Return to live nominal
+          </button>
+        </div>
+      )}
+
       {/* Main Dashboard Container */}
-      <main className="flex-1 max-w-[1750px] w-full mx-auto p-3.5 lg:p-5">
+      <main className="flex-1 max-w-[1750px] w-full mx-auto p-3.5 lg:p-5 space-y-4">
         
-        {/* KPI Executive Summary Header */}
+        {/* KPI Executive Summary Header (Sentence-case + Tabular Numerals) */}
         <KPIHeader
           latestData={latestData}
           onSelectAsset={handleSelectAsset}
         />
 
-        {/* Tailored Persona View when Technician or Manager is active */}
+        {/* Tailored Persona View for Technician or Manager */}
         {userRole !== 'engineer' && (
           <div className="mb-4">
             <RoleViewsContainer
@@ -147,174 +182,178 @@ export default function App() {
           </div>
         )}
 
-        {/* Primary Tab: 5-Zone Industrial Control Room Dashboard (DELFI / Foundry Standard) */}
-        {activeTab === 'control-room' && (
-          <div className="animate-fade-in">
-            <IndustrialControlRoomDashboard
-              latestData={latestData}
-              selectedAssetId={selectedAssetId}
-              onSelectAsset={handleSelectAsset}
-              onSelectScenario={handleScenarioChange}
-              userRole={userRole}
-              onNavigateTab={setActiveTab}
-            />
-          </div>
-        )}
+        {/* Suspense Container for Code-Split Modules */}
+        <Suspense fallback={<HubLoadingFallback />}>
+          
+          {/* Stage 1: Control Room Dashboard (5 Zones) */}
+          {activeTab === 'control-room' && (
+            <div className="animate-fade-in">
+              <IndustrialControlRoomDashboard
+                latestData={latestData}
+                selectedAssetId={selectedAssetId}
+                onSelectAsset={handleSelectAsset}
+                onSelectScenario={handleScenarioChange}
+                userRole={userRole}
+                onNavigateTab={setActiveTab}
+                selectedKP={selectedKP}
+                onSelectKP={setSelectedKP}
+              />
+            </div>
+          )}
 
-        {/* Tab 1: Continuous Condition Monitoring & Flowline/Riser Spatial Profile */}
-        {activeTab === 'condition-monitoring' && (
-          <div className="animate-fade-in">
-            <FlowlineRiserIntegrityHub
-              latestData={latestData}
-              selectedAssetId={selectedAssetId}
-              onSelectAsset={handleSelectAsset}
-              onSelectScenario={handleScenarioChange}
-            />
-          </div>
-        )}
+          {/* Stage 2: Routes & Spatial Profile */}
+          {activeTab === 'condition-monitoring' && (
+            <div className="animate-fade-in">
+              <FlowlineRiserIntegrityHub
+                latestData={latestData}
+                selectedAssetId={selectedAssetId}
+                onSelectAsset={handleSelectAsset}
+                onSelectScenario={handleScenarioChange}
+                selectedKP={selectedKP}
+                onSelectKP={setSelectedKP}
+              />
+            </div>
+          )}
 
-        {/* Tab 2: 3D Seabed Digital Twin & Physics FEM Mesh */}
-        {activeTab === 'digital-twin' && (
-          <div className="animate-fade-in">
-            <DigitalTwinHub
-              latestData={latestData}
-              selectedAssetId={selectedAssetId}
-              onSelectAsset={handleSelectAsset}
-            />
-          </div>
-        )}
+          {/* Stage 3: 3D Seabed Digital Twin */}
+          {activeTab === 'digital-twin' && (
+            <div className="animate-fade-in">
+              <DigitalTwinHub
+                latestData={latestData}
+                selectedAssetId={selectedAssetId}
+                onSelectAsset={handleSelectAsset}
+              />
+            </div>
+          )}
 
-        {/* Tab 3: ROV & AUV Underwater Monitoring & 4K HUD Operations */}
-        {activeTab === 'rov-deployment' && (
-          <div className="animate-fade-in">
-            <ROVDeploymentHub
-              latestData={latestData}
-              selectedAssetId={selectedAssetId}
-              onSelectAsset={handleSelectAsset}
-            />
-          </div>
-        )}
+          {/* Stage 4: ROV / AUV Operations */}
+          {activeTab === 'rov-deployment' && (
+            <div className="animate-fade-in">
+              <ROVDeploymentHub
+                latestData={latestData}
+                selectedAssetId={selectedAssetId}
+                onSelectAsset={handleSelectAsset}
+              />
+            </div>
+          )}
 
-        {/* Tab 4: Fault Classification, Severity Triage & Zone RUL */}
-        {activeTab === 'fault-classification' && (
-          <div className="animate-fade-in">
-            <FaultClassificationPanel
-              latestData={latestData}
-              selectedAssetId={selectedAssetId}
-              onSelectAsset={handleSelectAsset}
-            />
-          </div>
-        )}
+          {/* Stage 5: Alerts & Escalation */}
+          {activeTab === 'alerting-escalation' && (
+            <div className="animate-fade-in">
+              <AlertingAndEscalationHub
+                latestData={latestData}
+                onSelectAsset={handleSelectAsset}
+                onNavigateTab={setActiveTab}
+              />
+            </div>
+          )}
 
-        {/* Tab 5: Flow Assurance & Wax/Hydrate Dynamic Optimizer */}
-        {activeTab === 'flow-assurance' && (
-          <div className="animate-fade-in">
-            <FlowAssuranceOptimizer
-              latestData={latestData}
-              onSelectAsset={handleSelectAsset}
-            />
-          </div>
-        )}
+          {/* Stage 6: Economics & Condition-Based Inspection ROI */}
+          {activeTab === 'inspection-cbi' && (
+            <div className="animate-fade-in">
+              <ConditionBasedInspectionROI
+                latestData={latestData}
+                onSelectAsset={handleSelectAsset}
+              />
+            </div>
+          )}
 
-        {/* Tab 6: Corrosion/Erosion Rate & Wall-Thickness RUL Prognostics */}
-        {activeTab === 'corrosion-erosion' && (
-          <div className="animate-fade-in">
-            <CorrosionErosionPrognostics
-              latestData={latestData}
-              selectedAssetId={selectedAssetId}
-              onSelectAsset={handleSelectAsset}
-            />
-          </div>
-        )}
+          {/* Specialized Diagnostics */}
+          {activeTab === 'fault-classification' && (
+            <div className="animate-fade-in">
+              <FaultClassificationPanel
+                latestData={latestData}
+                selectedAssetId={selectedAssetId}
+                onSelectAsset={handleSelectAsset}
+              />
+            </div>
+          )}
 
-        {/* Tab 7: Riser Touchdown Zone (TDZ) Fatigue & Structural Health */}
-        {activeTab === 'riser-fatigue' && (
-          <div className="animate-fade-in">
-            <RiserFatigueStructuralHealth
-              latestData={latestData}
-              onSelectAsset={handleSelectAsset}
-            />
-          </div>
-        )}
+          {activeTab === 'flow-assurance' && (
+            <div className="animate-fade-in">
+              <FlowAssuranceOptimizer
+                latestData={latestData}
+                onSelectAsset={handleSelectAsset}
+              />
+            </div>
+          )}
 
-        {/* Tab 8: Early Subsea Leak Detection & Acoustic NPW Localization */}
-        {activeTab === 'leak-detection' && (
-          <div className="animate-fade-in">
-            <EarlyLeakDetectionHub
-              latestData={latestData}
-              onSelectAsset={handleSelectAsset}
-            />
-          </div>
-        )}
+          {activeTab === 'corrosion-erosion' && (
+            <div className="animate-fade-in">
+              <CorrosionErosionPrognostics
+                latestData={latestData}
+                selectedAssetId={selectedAssetId}
+                onSelectAsset={handleSelectAsset}
+              />
+            </div>
+          )}
 
-        {/* Tab 9: Alerting, Escalation & Closed-Loop Maintenance Logging */}
-        {activeTab === 'alerting-escalation' && (
-          <div className="animate-fade-in">
-            <AlertingAndEscalationHub
-              latestData={latestData}
-              onSelectAsset={handleSelectAsset}
-            />
-          </div>
-        )}
+          {activeTab === 'riser-fatigue' && (
+            <div className="animate-fade-in">
+              <RiserFatigueStructuralHealth
+                latestData={latestData}
+                onSelectAsset={handleSelectAsset}
+              />
+            </div>
+          )}
 
-        {/* Tab 10: Condition-Based Inspection (CBI) & ROV Cost Reduction */}
-        {activeTab === 'inspection-cbi' && (
-          <div className="animate-fade-in">
-            <ConditionBasedInspectionROI
-              latestData={latestData}
-              onSelectAsset={handleSelectAsset}
-            />
-          </div>
-        )}
+          {activeTab === 'leak-detection' && (
+            <div className="animate-fade-in">
+              <EarlyLeakDetectionHub
+                latestData={latestData}
+                onSelectAsset={handleSelectAsset}
+              />
+            </div>
+          )}
+
+        </Suspense>
 
       </main>
 
-      {/* Footer System Status Bar with Model Version & Audit SHA-256 */}
-      <footer className="bg-[#070b14] border-t border-slate-800/80 py-2 px-6 text-[10px] font-mono text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-2">
-        <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1 text-emerald-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            DAS FIBER BUS: ONLINE (20 Hz)
+      {/* Footer System Status Bar (Sentence Case) */}
+      <footer className="bg-[#050912] border-t border-slate-800/80 py-2.5 px-6 text-xs font-sans text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div className="flex items-center flex-wrap gap-2.5">
+          <span className="flex items-center gap-1.5 text-emerald-400">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            DAS fiber acoustic bus: Online (20 Hz)
           </span>
           <span className="text-slate-700">|</span>
-          <span>IEEE 1588 PTP JITTER: <strong className="text-cyan-300">±8ns</strong></span>
+          <span>Seabed baseline: <strong className="text-slate-200 font-mono tabular-nums">-{SEABED_DEPTH_M} m</strong></span>
           <span className="text-slate-700">|</span>
-          <span>MODEL VER: <strong className="text-cyan-300">v4.2.8-prod</strong></span>
+          <span>PTP clock sync jitter: <strong className="text-cyan-300 font-mono tabular-nums">±8ns</strong></span>
           <span className="text-slate-700">|</span>
-          <span>AUDIT SHA-256: <strong className="text-slate-300">8f4b2a901c3e</strong></span>
+          <span>Model version: <strong className="text-cyan-300 font-mono">v4.2.8-prod</strong></span>
           <span className="text-slate-700">|</span>
-          <span>ROLE: <strong className="text-amber-300 uppercase">{userRole}</strong></span>
+          <span>Role active: <strong className="text-amber-300 capitalize">{userRole.replace('_', ' ')}</strong></span>
         </div>
 
-        <div className="text-slate-500">
+        <div className="text-slate-500 text-[11px] font-sans">
           SubseaGuard AI • Deepwater Subsea Predictive Maintenance • API 17D / DNV-RP-F116 / ISO 14224
         </div>
       </footer>
 
-      {/* Architecture Flow Modal */}
-      {isArchitectureOpen && (
-        <ArchitectureModal
-          onClose={() => setIsArchitectureOpen(false)}
-        />
-      )}
+      {/* Modals with Suspense */}
+      <Suspense fallback={null}>
+        {isArchitectureOpen && (
+          <ArchitectureModal onClose={() => setIsArchitectureOpen(false)} />
+        )}
 
-      {/* Asset Drill-Down Inspection Modal */}
-      {isDetailModalOpen && (
-        <AssetDetailModal
-          assetId={selectedAssetId}
-          latestData={latestData}
-          onClose={() => setIsDetailModalOpen(false)}
-          onNavigateTab={(tab) => setActiveTab(tab)}
-        />
-      )}
+        {isDetailModalOpen && (
+          <AssetDetailModal
+            assetId={selectedAssetId}
+            latestData={latestData}
+            onClose={() => setIsDetailModalOpen(false)}
+            onNavigateTab={(tab) => setActiveTab(tab)}
+          />
+        )}
 
-      {/* Audit Report Generator Modal */}
-      {isReportOpen && (
-        <ReportGeneratorModal
-          latestData={latestData}
-          onClose={() => setIsReportOpen(false)}
-        />
-      )}
+        {isReportOpen && (
+          <ReportGeneratorModal
+            latestData={latestData}
+            onClose={() => setIsReportOpen(false)}
+          />
+        )}
+      </Suspense>
 
     </div>
   );

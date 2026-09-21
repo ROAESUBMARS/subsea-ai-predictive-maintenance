@@ -45,6 +45,7 @@ export default function ConditionBasedInspectionROI({ latestData, onSelectAsset 
     'GEL-201': false
   });
   const [engineerSigner, setEngineerSigner] = useState('Chief Subsea Integrity Engineer (M. Chen, PE)');
+  const [justificationNote, setJustificationNote] = useState('Verified against acoustic DAS anomaly threshold and DNV-RP-F116 guidelines.');
 
   if (!latestData) return null;
 
@@ -59,6 +60,8 @@ export default function ConditionBasedInspectionROI({ latestData, onSelectAsset 
     riskReductionPct: 78.4,
     plannedNextCbiTarget: 'SCR-01 Touchdown Zone (KP 2.85) Ultrasonic Phased Array Scan'
   };
+
+  const auditLog = latestData.hitlAuditLog || [];
 
   // 1. Annual Cost Comparison (Calendar vs AI Condition-Based)
   const costComparisonData = {
@@ -80,7 +83,30 @@ export default function ConditionBasedInspectionROI({ latestData, onSelectAsset 
     ]
   };
 
-  // 2. Breakdown of Savings
+  // 2. Before/After OPEX by Subsea Asset (Calendar vs CBI)
+  const assetOpexComparisonData = {
+    labels: ['Blowout Preventer (BOP)', 'SCR Riser & TDZ', 'Subsea Manifold (SM-01)'],
+    datasets: [
+      {
+        label: 'Calendar-based Inspection ($k / yr)',
+        data: [527, 407, 300],
+        backgroundColor: 'rgba(239, 68, 68, 0.75)',
+        borderColor: '#ef4444',
+        borderWidth: 1,
+        borderRadius: 4
+      },
+      {
+        label: 'Condition-Based Inspection ($k / yr)',
+        data: [307, 233, 173],
+        backgroundColor: 'rgba(16, 185, 129, 0.85)',
+        borderColor: '#10b981',
+        borderWidth: 1,
+        borderRadius: 4
+      }
+    ]
+  };
+
+  // 3. Breakdown of Savings
   const savingsBreakdownData = {
     labels: ['DSV Vessel Day Rates', 'ROV Crew Spread', 'Fuel & Marine Logistics', 'Unscheduled Deferment Avoided'],
     datasets: [
@@ -97,10 +123,19 @@ export default function ConditionBasedInspectionROI({ latestData, onSelectAsset 
     ]
   };
 
-  const handleToggleAuthorization = (assetId) => {
+  const handleToggleAuthorization = (mission) => {
+    const isAuth = authorizedMissions[mission.id];
+    if (!isAuth && telemetryEngine.authorizeMission) {
+      telemetryEngine.authorizeMission({
+        missionId: mission.id,
+        missionTitle: mission.title,
+        engineerName: engineerSigner,
+        reason: justificationNote || mission.reason
+      });
+    }
     setAuthorizedMissions(prev => ({
       ...prev,
-      [assetId]: !prev[assetId]
+      [mission.id]: !prev[mission.id]
     }));
   };
 
@@ -186,6 +221,29 @@ export default function ConditionBasedInspectionROI({ latestData, onSelectAsset 
           </div>
         </div>
 
+        {/* Engineer Identity & Mandatory Justification Form Strip */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4 p-3 bg-[#0a0e17] rounded-lg border border-slate-800 text-xs font-mono">
+          <div>
+            <label className="text-slate-400 block mb-1 text-[10px] font-bold">AUTHORIZING ENGINEER NAME & TITLE</label>
+            <input
+              type="text"
+              value={engineerSigner}
+              onChange={(e) => setEngineerSigner(e.target.value)}
+              className="w-full bg-[#111a2e] border border-slate-700 rounded px-2.5 py-1.5 text-white font-mono focus:outline-none focus:border-cyan-400"
+            />
+          </div>
+          <div>
+            <label className="text-slate-400 block mb-1 text-[10px] font-bold">MANDATORY ENGINEERING BASIS / JUSTIFICATION</label>
+            <input
+              type="text"
+              value={justificationNote}
+              onChange={(e) => setJustificationNote(e.target.value)}
+              className="w-full bg-[#111a2e] border border-slate-700 rounded px-2.5 py-1.5 text-white font-mono focus:outline-none focus:border-cyan-400"
+              placeholder="State regulatory or physics threshold..."
+            />
+          </div>
+        </div>
+
         <div className="space-y-2.5">
           {[
             {
@@ -242,7 +300,8 @@ export default function ConditionBasedInspectionROI({ latestData, onSelectAsset 
 
                 <div className="shrink-0 flex items-center gap-2">
                   <button
-                    onClick={() => handleToggleAuthorization(mission.id)}
+                    type="button"
+                    onClick={() => handleToggleAuthorization(mission)}
                     className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold transition-all flex items-center gap-1.5 ${
                       isAuthorized
                         ? 'bg-emerald-500 text-black hover:bg-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
@@ -257,37 +316,134 @@ export default function ConditionBasedInspectionROI({ latestData, onSelectAsset 
             );
           })}
         </div>
+
+        {/* Immutable Audit Log Table */}
+        <div className="mt-5 pt-4 border-t border-slate-800">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <h4 className="text-xs font-heading font-bold text-white uppercase tracking-wider">
+                Immutable Mission Authorization Audit Log
+              </h4>
+            </div>
+            <span className="text-[10px] font-mono text-slate-400">
+              CRYPTOGRAPHIC INTEGRITY: SHA-256 HASH CHAIN
+            </span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs font-mono">
+              <thead>
+                <tr className="border-b border-slate-800 text-slate-400 text-[10px]">
+                  <th className="pb-2">LOG ID</th>
+                  <th className="pb-2">TIMESTAMP</th>
+                  <th className="pb-2">MISSION TARGET</th>
+                  <th className="pb-2">AUTHORIZING ENGINEER</th>
+                  <th className="pb-2">JUSTIFICATION BASIS</th>
+                  <th className="pb-2">HASH</th>
+                  <th className="pb-2 text-right">STATUS</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/60">
+                {auditLog.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="py-3 text-center text-slate-500">
+                      No past mission authorizations recorded.
+                    </td>
+                  </tr>
+                ) : (
+                  auditLog.map(entry => (
+                    <tr key={entry.id} className="hover:bg-slate-900/40 transition-colors">
+                      <td className="py-2.5 font-bold text-cyan-300">{entry.id}</td>
+                      <td className="py-2.5 text-slate-400 text-[11px] whitespace-nowrap">{entry.timestamp}</td>
+                      <td className="py-2.5 text-white font-sans max-w-[180px] truncate">{entry.missionTitle || entry.missionId}</td>
+                      <td className="py-2.5 text-slate-300 whitespace-nowrap">{entry.engineerName}</td>
+                      <td className="py-2.5 text-slate-400 font-sans text-[11px] max-w-[220px] truncate" title={entry.reason}>{entry.reason}</td>
+                      <td className="py-2.5 text-emerald-400/80 text-[10px] font-mono">{entry.hash}</td>
+                      <td className="py-2.5 text-right whitespace-nowrap">
+                        <span className="badge badge-normal text-[9px] py-0.5 px-2">
+                          {entry.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
 
-      {/* 2 Comparison Charts: OPEX Trend & Savings Distribution */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      {/* 3 Comparison Charts: OPEX Trend, Asset-by-Asset Before/After, & Savings Distribution */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         
         {/* Cost Comparison Bar Chart */}
         <div className="glass-panel p-4 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-heading font-bold text-white flex items-center gap-2">
+              <h3 className="text-xs font-heading font-bold text-white flex items-center gap-1.5">
                 <TrendingDown className="w-4 h-4 text-emerald-400" />
-                Annual Inspection OPEX Comparison (Calendar vs AI-CBI)
+                Annual OPEX Trend (Calendar vs AI-CBI)
               </h3>
-              <span className="text-[10px] font-mono text-emerald-400">-68% COST REDUCTION</span>
+              <span className="text-[10px] font-mono text-emerald-400">-68% COST</span>
             </div>
-            <p className="text-xs text-slate-400 font-mono mb-3">
-              Transition from blind $6M/yr calendar vessel charters to targeted AI condition-based campaigns.
+            <p className="text-[11px] text-slate-400 font-mono mb-3">
+              Transition from blind $6M/yr vessel charters to AI-targeted campaigns.
             </p>
 
-            <div className="h-[240px] w-full">
+            <div className="h-[220px] w-full">
               <Bar
                 data={costComparisonData}
                 options={{
                   responsive: true,
                   maintainAspectRatio: false,
                   scales: {
-                    x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 } } },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 9 } } },
                     y: {
-                      title: { display: true, text: '$ Millions USD', color: '#64748b', font: { size: 10 } },
+                      title: { display: true, text: '$ Millions USD', color: '#64748b', font: { size: 9 } },
                       grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                      ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } }
+                      ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 9 } }
+                    }
+                  }
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Asset-by-Asset Before/After Grouped Bar Comparison */}
+        <div className="glass-panel p-4 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-xs font-heading font-bold text-white flex items-center gap-1.5">
+                <Layers className="w-4 h-4 text-cyan-400" />
+                Asset OPEX: Calendar vs CBI
+              </h3>
+              <span className="text-[10px] font-mono text-cyan-300">-42% AVERAGE</span>
+            </div>
+            <p className="text-[11px] text-slate-400 font-mono mb-3">
+              BOP: $527k vs $307k • Riser: $407k vs $233k • Manifold: $300k vs $173k.
+            </p>
+
+            <div className="h-[220px] w-full">
+              <Bar
+                data={assetOpexComparisonData}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 9 } } },
+                    y: {
+                      title: { display: true, text: 'OPEX ($k USD)', color: '#64748b', font: { size: 9 } },
+                      grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                      ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 9 } }
+                    }
+                  },
+                  plugins: {
+                    legend: {
+                      position: 'top',
+                      labels: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 9 }, boxWidth: 10 }
                     }
                   }
                 }}
@@ -300,17 +456,17 @@ export default function ConditionBasedInspectionROI({ latestData, onSelectAsset 
         <div className="glass-panel p-4 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-heading font-bold text-white flex items-center gap-2">
+              <h3 className="text-xs font-heading font-bold text-white flex items-center gap-1.5">
                 <ShieldCheck className="w-4 h-4 text-cyan-400" />
-                OPEX Savings Distribution by Operational Category
+                OPEX Savings Distribution
               </h3>
               <span className="badge badge-cyan text-[10px] font-mono">$3.83M SAVED</span>
             </div>
-            <p className="text-xs text-slate-400 font-mono mb-3">
-              Primary cost avoidance driven by reduced Deepwater Support Vessel (DSV) mobilization days.
+            <p className="text-[11px] text-slate-400 font-mono mb-3">
+              Cost avoidance breakdown across vessel days, crew, fuel & deferment.
             </p>
 
-            <div className="h-[240px] w-full flex items-center justify-center">
+            <div className="h-[220px] w-full flex items-center justify-center">
               <Doughnut
                 data={savingsBreakdownData}
                 options={{
@@ -319,7 +475,7 @@ export default function ConditionBasedInspectionROI({ latestData, onSelectAsset 
                   plugins: {
                     legend: {
                       position: 'bottom',
-                      labels: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 }, boxWidth: 12 }
+                      labels: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 9 }, boxWidth: 10 }
                     }
                   }
                 }}

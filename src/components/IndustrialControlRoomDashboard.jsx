@@ -60,15 +60,23 @@ export default function IndustrialControlRoomDashboard({
   onSelectAsset,
   onSelectScenario,
   userRole,
-  onNavigateTab
+  onNavigateTab,
+  selectedKP = null,
+  onSelectKP
 }) {
   const [timeWindow, setTimeWindow] = useState('1h');
-  const [operatingMode, setOperatingMode] = useState('AUTONOMOUS AI-CBI');
+  const [operatingMode, setOperatingMode] = useState('Autonomous AI-CBI');
   const [isRovDispatchModalOpen, setIsRovDispatchModalOpen] = useState(false);
   const [activeDispatchMission, setActiveDispatchMission] = useState(null);
   const [engineerSignoffConfirmed, setEngineerSignoffConfirmed] = useState(false);
-  const [engineerName, setEngineerName] = useState('Lead Subsea Integrity Engineer (J. Vance, PE)');
+  const [engineerName, setEngineerName] = useState('Lead Subsea Integrity Engineer (O. Smithson, PE)');
+  const [justificationReason, setJustificationReason] = useState('Verified against acoustic DAS anomaly threshold and DNV-RP-F116 guidelines.');
   const [dispatchStatus, setDispatchStatus] = useState('READY');
+
+  // Alert Acknowledgment Modal State
+  const [ackAlertModal, setAckAlertModal] = useState(null);
+  const [ackEngineerName, setAckEngineerName] = useState('O. Smithson, PE (Control Room Lead)');
+  const [ackNote, setAckNote] = useState('Telemetry anomaly cross-referenced against acoustic DAS stream. Observation active.');
 
   if (!latestData || !latestData.assets) return null;
 
@@ -76,6 +84,9 @@ export default function IndustrialControlRoomDashboard({
   const assetTelemetry = latestData.assets[currentAssetKey] || latestData.assets['PFL-101'];
   const assetMeta = ASSET_DEFINITIONS.find(a => a.id === currentAssetKey) || ASSET_DEFINITIONS[1];
   const activeAlerts = latestData.activeAlerts || [];
+  const filteredAlerts = selectedKP !== null
+    ? activeAlerts.filter(a => a.kp === undefined || Math.abs(a.kp - selectedKP) <= 3)
+    : activeAlerts;
   const kpProfile = latestData.kpTelemetryProfile || [];
   const history = telemetryEngine.history;
 
@@ -131,6 +142,7 @@ export default function IndustrialControlRoomDashboard({
       vesselSpread: 'DSV Deep Constructor / ROV Hercules-IV',
       reason: alert.message || 'Critical threshold anomaly flagged by Stage 3 autoencoder.'
     });
+    setJustificationReason(`Verified against ${alert.category || 'operational'} alert (${alert.id}). Mobilization compliant with DNV-RP-F116.`);
     setEngineerSignoffConfirmed(false);
     setDispatchStatus('READY');
     setIsRovDispatchModalOpen(true);
@@ -141,17 +153,34 @@ export default function IndustrialControlRoomDashboard({
     if (!engineerSignoffConfirmed) return;
     setDispatchStatus('EXECUTING');
     setTimeout(() => {
-      telemetryEngine.requestRovAuthorization({
-        assetId: activeDispatchMission.assetId,
-        location: activeDispatchMission.location,
-        reason: activeDispatchMission.reason,
-        costEstimateUsd: 115000
-      });
+      if (telemetryEngine.requestRovAuthorization) {
+        telemetryEngine.requestRovAuthorization({
+          assetId: activeDispatchMission.assetId,
+          location: activeDispatchMission.location,
+          reason: justificationReason || activeDispatchMission.reason,
+          costEstimateUsd: 115000
+        });
+      }
+      if (telemetryEngine.authorizeMission) {
+        telemetryEngine.authorizeMission({
+          missionId: activeDispatchMission.assetId,
+          missionTitle: activeDispatchMission.title,
+          engineerName,
+          reason: justificationReason || activeDispatchMission.reason
+        });
+      }
       setDispatchStatus('DISPATCHED_CONFIRMED');
       setTimeout(() => {
         setIsRovDispatchModalOpen(false);
       }, 1200);
     }, 800);
+  };
+
+  const handleConfirmAcknowledge = (e) => {
+    e.preventDefault();
+    if (!ackAlertModal) return;
+    telemetryEngine.acknowledgeAlert(ackAlertModal.id, ackEngineerName, ackNote);
+    setAckAlertModal(null);
   };
 
   return (
@@ -259,7 +288,7 @@ export default function IndustrialControlRoomDashboard({
             <div className="p-3 rounded bg-[#0a0e17] border border-slate-800 space-y-3 font-mono">
               <div className="flex items-center justify-between text-[10px] text-slate-400 border-b border-slate-800/80 pb-1.5">
                 <span className="text-cyan-300 font-bold">MANIFOLD SM-01 (KP 0.0)</span>
-                <span>SEABED ROUTE (-1,830m)</span>
+                <span>Seabed route (-1,850 m)</span>
                 <span className="text-purple-300 font-bold">PLET-01 / SCR-01 (KP 12.4)</span>
               </div>
 
@@ -285,27 +314,51 @@ export default function IndustrialControlRoomDashboard({
                 ].map((node, i) => {
                   const isCrit = node.status === 'CRITICAL';
                   const isWarn = node.status === 'WARNING';
+                  const isSelected = selectedKP !== null && Math.abs(selectedKP - node.kp) < 0.1;
                   return (
-                    <div
+                    <button
+                      type="button"
                       key={i}
-                      className="relative z-10 flex flex-col items-center cursor-pointer group"
-                      title={`${node.name} at KP ${node.kp} km`}
+                      onClick={() => onSelectKP && onSelectKP(isSelected ? null : node.kp)}
+                      className={`relative z-10 flex flex-col items-center cursor-pointer group focus:outline-none transition-transform ${
+                        isSelected ? 'scale-110' : 'hover:scale-105'
+                      }`}
+                      title={`${node.name} at KP ${node.kp} km — Click to filter console`}
                     >
                       <div className={`w-4 h-4 rounded-full border-2 border-[#0a0e17] flex items-center justify-center transition-all ${
+                        isSelected ? 'ring-2 ring-cyan-400 ring-offset-2 ring-offset-[#0a0e17]' : ''
+                      } ${
                         isCrit ? 'bg-rose-500 shadow-[0_0_12px_rgba(239,68,68,0.8)] animate-ping' :
                         isWarn ? 'bg-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.6)]' :
                         'bg-emerald-400 group-hover:scale-125'
                       }`} />
-                      <span className="text-[9px] text-slate-300 font-bold mt-1">
+                      <span className={`text-[9px] font-bold mt-1 ${isSelected ? 'text-cyan-300 underline' : 'text-slate-300'}`}>
                         KP {node.kp}
                       </span>
                       <span className="text-[8px] text-slate-500">
                         {node.label}
                       </span>
-                    </div>
+                    </button>
                   );
                 })}
               </div>
+
+              {/* Cross-filter status chip */}
+              {selectedKP !== null && (
+                <div className="flex items-center justify-between px-3 py-1.5 bg-cyan-950/40 border border-cyan-500/40 rounded text-xs text-cyan-200">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span>Cross-filtering console by location: <strong className="font-mono">KP {selectedKP.toFixed(1)} km</strong></span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onSelectKP && onSelectKP(null)}
+                    className="px-2 py-0.5 text-[10px] font-mono bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-600 transition-colors"
+                  >
+                    Clear Filter ✕
+                  </button>
+                </div>
+              )}
 
               {/* Live Spatial Telemetry Readout */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-800 text-[10px]">
@@ -527,41 +580,110 @@ export default function IndustrialControlRoomDashboard({
                 </span>
               </div>
 
-              <div className="space-y-2 overflow-y-auto max-h-[220px] pr-1">
-                {activeAlerts.length === 0 ? (
+              <div className="space-y-2 overflow-y-auto max-h-[260px] pr-1">
+                {filteredAlerts.length === 0 ? (
                   <div className="p-4 rounded bg-[#0a0e17] border border-slate-800 text-center text-slate-500 font-mono text-xs">
-                    No active critical alerts. All baseline thresholds nominal.
+                    {selectedKP !== null 
+                      ? `No active alerts within KP ${selectedKP.toFixed(1)} km vicinity.` 
+                      : 'No active critical alerts. All baseline thresholds nominal.'}
                   </div>
                 ) : (
-                  activeAlerts.map(alert => (
-                    <div
-                      key={alert.id}
-                      className="p-3 rounded bg-rose-950/30 border border-rose-500/40 space-y-2 font-mono text-xs"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="badge badge-critical text-[9px]">
-                          {alert.severity} • {alert.id}
-                        </span>
-                        <span className="text-[10px] text-slate-400">{alert.timestamp?.slice(11, 19)}</span>
-                      </div>
-
-                      <div className="text-white font-bold text-xs">{alert.title}</div>
-                      <p className="text-[11px] text-slate-300 font-sans leading-snug">{alert.message}</p>
-                      
-                      <div className="text-[10px] text-cyan-400">
-                        Recommended: {alert.action}
-                      </div>
-
-                      {/* 1-Click ROV Dispatch with HITL Gate */}
-                      <button
-                        onClick={() => handleOpenRovDispatch(alert)}
-                        className="w-full py-1.5 rounded bg-gradient-to-r from-rose-500 to-amber-500 text-black font-bold text-xs font-mono hover:brightness-110 flex items-center justify-center gap-1.5 shadow-[0_0_12px_rgba(239,68,68,0.3)] transition-all"
+                  filteredAlerts.map(alert => {
+                    const isAck = alert.acknowledged || false;
+                    const alertOwner = alert.owner || 'Unassigned';
+                    return (
+                      <div
+                        key={alert.id}
+                        className={`p-3 rounded border space-y-2 font-mono text-xs transition-all ${
+                          isAck 
+                            ? 'bg-slate-900/60 border-slate-700/60 opacity-85' 
+                            : alert.severity === 'WARNING' 
+                              ? 'bg-amber-950/20 border-amber-500/40' 
+                              : 'bg-rose-950/30 border-rose-500/40'
+                        }`}
                       >
-                        <Camera className="w-3.5 h-3.5" />
-                        Initiate ROV Anomaly Sweep (Engineer Sign-Off Gate)
-                      </button>
-                    </div>
-                  ))
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1.5">
+                            <span className={`badge ${
+                              isAck ? 'bg-slate-800 text-slate-300 border border-slate-600' :
+                              alert.severity === 'WARNING' ? 'badge-warning' : 'badge-critical'
+                            } text-[9px]`}>
+                              {isAck ? 'ACKNOWLEDGED' : alert.severity} • {alert.id}
+                            </span>
+                            {alert.kp !== undefined && (
+                              <span className="text-[9px] text-cyan-300 font-mono bg-cyan-950/50 px-1.5 py-0.5 rounded border border-cyan-800/40">
+                                KP {alert.kp} km
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-[10px] text-slate-400">{alert.timestamp?.slice(11, 19)}</span>
+                        </div>
+
+                        <div className="text-white font-bold text-xs">{alert.title}</div>
+                        <p className="text-[11px] text-slate-300 font-sans leading-snug">{alert.message}</p>
+                        
+                        <div className="flex items-center justify-between text-[10px] text-slate-400 pt-1 border-t border-slate-800/60">
+                          <span>Owner: <strong className="text-cyan-300">{alertOwner}</strong></span>
+                          <span>Asset: <strong className="text-slate-200">{alert.assetId || 'PFL-101'}</strong></span>
+                        </div>
+
+                        {/* Alert Action Toolbar: Acknowledge, Assign, Jump to Asset, ROV Dispatch */}
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => setAckAlertModal(alert)}
+                            className={`py-1 px-1.5 rounded text-[10px] font-mono font-medium border flex items-center justify-center gap-1 transition-colors ${
+                              isAck 
+                                ? 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700' 
+                                : 'bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 border-cyan-500/50'
+                            }`}
+                          >
+                            <CheckCircle2 className="w-3 h-3" />
+                            {isAck ? 'Ack Details' : 'Acknowledge'}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newOwner = window.prompt(`Assign engineer/owner for ${alert.id}:`, alert.owner || 'Lead Engineer');
+                              if (newOwner && newOwner.trim()) {
+                                telemetryEngine.assignAlertOwner(alert.id, newOwner.trim());
+                              }
+                            }}
+                            className="py-1 px-1.5 rounded text-[10px] font-mono bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center justify-center gap-1 transition-colors"
+                          >
+                            <UserCheck className="w-3 h-3" />
+                            Assign
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (alert.assetId && onSelectAsset) {
+                                onSelectAsset(alert.assetId);
+                              }
+                              if (alert.targetTab && onNavigateTab) {
+                                onNavigateTab(alert.targetTab);
+                              }
+                            }}
+                            className="py-1 px-1.5 rounded text-[10px] font-mono bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center justify-center gap-1 transition-colors"
+                          >
+                            <ArrowRight className="w-3 h-3" />
+                            Jump
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => handleOpenRovDispatch(alert)}
+                            className="py-1 px-1.5 rounded text-[10px] font-mono bg-gradient-to-r from-rose-500 to-amber-500 hover:brightness-110 text-black font-bold flex items-center justify-center gap-1 transition-all"
+                          >
+                            <Camera className="w-3 h-3" />
+                            ROV Gate
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })
                 )}
               </div>
             </div>
@@ -628,6 +750,19 @@ export default function IndustrialControlRoomDashboard({
                   value={engineerName}
                   onChange={(e) => setEngineerName(e.target.value)}
                   className="w-full bg-[#0a0e17] border border-slate-800 rounded p-2 text-white font-mono focus:outline-none"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-slate-400 block mb-1 text-[10px]">MANDATORY ENGINEERING JUSTIFICATION</label>
+                <textarea
+                  rows={2}
+                  value={justificationReason}
+                  onChange={(e) => setJustificationReason(e.target.value)}
+                  className="w-full bg-[#0a0e17] border border-slate-800 rounded p-2 text-white font-mono focus:outline-none text-xs"
+                  placeholder="State engineering basis and compliance reference..."
+                  required
                 />
               </div>
 
@@ -668,6 +803,72 @@ export default function IndustrialControlRoomDashboard({
               </div>
             </form>
 
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: ALERT ACKNOWLEDGMENT WITH AUDIT JUSTIFICATION */}
+      {/* ========================================================================= */}
+      {ackAlertModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in font-mono text-xs">
+          <div className="glass-panel w-full max-w-lg flex flex-col overflow-hidden border border-cyan-500/40 shadow-[0_0_50px_rgba(6,182,212,0.2)]">
+            <div className="flex items-center justify-between p-4 bg-[#0a0e17] border-b border-cyan-500/30">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                <h3 className="text-sm font-heading font-bold text-white uppercase">
+                  Acknowledge Alert ({ackAlertModal.id})
+                </h3>
+              </div>
+              <button onClick={() => setAckAlertModal(null)} className="text-slate-400 hover:text-white">✕</button>
+            </div>
+
+            <form onSubmit={handleConfirmAcknowledge} className="p-5 space-y-3 bg-[#0d1526]">
+              <div className="p-3 rounded bg-[#0a0e17] border border-slate-800">
+                <div className="text-white font-bold mb-1">{ackAlertModal.title}</div>
+                <p className="text-[11px] text-slate-400 font-sans">{ackAlertModal.message}</p>
+              </div>
+
+              <div>
+                <label className="text-slate-400 block mb-1 text-[10px]">ENGINEER NAME & CREDENTIALS</label>
+                <input
+                  type="text"
+                  value={ackEngineerName}
+                  onChange={(e) => setAckEngineerName(e.target.value)}
+                  className="w-full bg-[#0a0e17] border border-slate-800 rounded p-2 text-white font-mono focus:outline-none"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-slate-400 block mb-1 text-[10px]">ACKNOWLEDGMENT BASIS / ACTION NOTE</label>
+                <textarea
+                  rows={3}
+                  value={ackNote}
+                  onChange={(e) => setAckNote(e.target.value)}
+                  className="w-full bg-[#0a0e17] border border-slate-800 rounded p-2 text-white font-mono focus:outline-none text-xs"
+                  placeholder="Explain cross-referencing steps or observation protocols..."
+                  required
+                />
+              </div>
+
+              <div className="pt-2 border-t border-slate-800 flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setAckAlertModal(null)}
+                  className="px-3.5 py-1.5 rounded bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-[0_0_15px_rgba(6,182,212,0.4)]"
+                >
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  Confirm Acknowledgment
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

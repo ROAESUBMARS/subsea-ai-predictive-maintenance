@@ -48,9 +48,12 @@ export default function FlowlineRiserIntegrityHub({
   latestData,
   selectedAssetId,
   onSelectAsset,
-  onSelectScenario
+  onSelectScenario,
+  selectedKP = null,
+  onSelectKP
 }) {
-  const [activeSegmentKp, setActiveSegmentKp] = useState(4.5);
+  const [internalSegmentKp, setInternalSegmentKp] = useState(4.5);
+  const activeSegmentKp = selectedKP !== null ? selectedKP : internalSegmentKp;
   const [selectedSensorChannel, setSelectedSensorChannel] = useState('pressure');
 
   if (!latestData || !latestData.assets) return null;
@@ -191,7 +194,7 @@ export default function FlowlineRiserIntegrityHub({
               </span>
             </div>
             <p className="text-xs text-slate-400 font-mono mt-0.5">
-              DEPTH: -{assetMeta.depth}m • OD: {assetMeta.outerDiameterInches}" • LENGTH: {assetMeta.lengthKm} km • GRADE: {assetMeta.materialGrade}
+              DEPTH: -{assetMeta.depth?.toLocaleString()} m • OD: {assetMeta.outerDiameterInches}" • LENGTH: {assetMeta.lengthKm} km • GRADE: {assetMeta.materialGrade}
             </p>
           </div>
         </div>
@@ -408,7 +411,20 @@ export default function FlowlineRiserIntegrityHub({
           {/* Interactive KP Segment Strip */}
           <div className="mt-4 pt-3 border-t border-cyan-500/10">
             <div className="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
-              <span>PIPELINE SEGMENT INSPECTION STRIP</span>
+              <span className="flex items-center gap-2">
+                <span>PIPELINE SEGMENT INSPECTION STRIP</span>
+                {selectedKP !== null && (
+                  <button
+                    onClick={() => {
+                      if (onSelectKP) onSelectKP(null);
+                      setInternalSegmentKp(4.5);
+                    }}
+                    className="text-[10px] text-cyan-400 hover:text-cyan-300 underline"
+                  >
+                    (Clear filter ✕)
+                  </button>
+                )}
+              </span>
               <span className="text-cyan-400">ACTIVE: KP {activeSegmentKp} km</span>
             </div>
             <div className="grid grid-cols-6 sm:grid-cols-12 gap-1">
@@ -419,7 +435,10 @@ export default function FlowlineRiserIntegrityHub({
                 return (
                   <button
                     key={i}
-                    onClick={() => setActiveSegmentKp(pt.kp)}
+                    onClick={() => {
+                      setInternalSegmentKp(pt.kp);
+                      if (onSelectKP) onSelectKP(pt.kp);
+                    }}
                     className={`py-2 px-1 rounded text-center font-mono text-[10px] transition-all ${
                       isSelected
                         ? 'bg-cyan-500 text-black font-bold shadow-[0_0_12px_rgba(0,242,254,0.5)]'

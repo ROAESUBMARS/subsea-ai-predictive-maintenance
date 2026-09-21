@@ -5,12 +5,15 @@
 // Stage 3: Bayesian Uncertainty Quantification (UQ), Constrained RL Dosing Guardrails, SHAP Explainability, PSI Model Drift Tracking
 // Stage 4: Bidirectional Inspection Calibration & Human-in-the-Loop (HITL) Sign-off Gate
 
+// Single Source of Truth for Seabed Baseline Depth (API 17D / DNV-RP-F116)
+export const SEABED_DEPTH_M = 1850;
+
 export const ASSET_DEFINITIONS = [
   {
     id: 'SCR-01',
     name: 'Deepwater Steel Catenary Riser Alpha',
     type: 'Steel Catenary Riser (SCR)',
-    depth: 1850,
+    depth: SEABED_DEPTH_M,
     lengthKm: 8.4,
     outerDiameterInches: 12.75,
     innerDiameterMm: 273.0,
@@ -25,7 +28,7 @@ export const ASSET_DEFINITIONS = [
     icon: 'GitBranch',
     criticality: 'CRITICAL_PRODUCTION',
     downtimeCostPerHourUsd: 85000,
-    description: '12-inch dynamic Steel Catenary Riser connecting seabed PLET to Floating Production Unit (FPU). Subjected to high cyclic wave motion, benthic currents (VIV), and touchdown fatigue.',
+    description: '12-inch dynamic Steel Catenary Riser connecting seabed PLET to Floating Production Unit (FPU). Subjected to high cyclic wave motion, benthic currents (VIV), and touchdown fatigue at -1,850 m.',
     sensors: [
       { id: 'tdz_accel_1', name: 'TDZ Triaxial Accelerometer #1 (VIV)', type: 'Vibration/VIV', unit: 'g', healthPct: 99.4, ptpSyncOffsetNs: 12 },
       { id: 'tdz_strain_1', name: 'Touchdown Dynamic Fiber-Optic Strain Gauge', type: 'Strain', unit: 'µε', healthPct: 98.8, ptpSyncOffsetNs: 14 },
@@ -43,7 +46,7 @@ export const ASSET_DEFINITIONS = [
     id: 'PFL-101',
     name: 'Primary Multiphase Production Flowline',
     type: 'Subsea Production Flowline',
-    depth: 1830,
+    depth: SEABED_DEPTH_M,
     lengthKm: 12.4,
     outerDiameterInches: 14.0,
     innerDiameterMm: 304.8,
@@ -75,7 +78,7 @@ export const ASSET_DEFINITIONS = [
     id: 'GEL-201',
     name: 'High-Pressure Subsea Gas Export Flowline',
     type: 'Subsea Gas Export Flowline',
-    depth: 1810,
+    depth: SEABED_DEPTH_M,
     lengthKm: 18.6,
     outerDiameterInches: 16.0,
     innerDiameterMm: 362.0,
@@ -89,7 +92,7 @@ export const ASSET_DEFINITIONS = [
     icon: 'Radio',
     criticality: 'HIGH',
     downtimeCostPerHourUsd: 72000,
-    description: '16-inch high-pressure gas export line transporting gas across 18.6 km. Continuous monitoring of rapid depressurization transients and high fluid velocity.',
+    description: '16-inch high-pressure gas export line transporting gas across 18.6 km. Continuous monitoring of rapid depressurization transients and high fluid velocity at -1,850 m.',
     sensors: [
       { id: 'gel_mass_flow_in', name: 'Inlet Venturi Gas Mass Flowmeter', type: 'Mass Flow', unit: 'kg/s', healthPct: 98.9, ptpSyncOffsetNs: 10 },
       { id: 'gel_pressure_gradient', name: 'Differential Pressure Gradient & Transient (dP/dt)', type: 'Transient P', unit: 'bar/s', healthPct: 99.5, ptpSyncOffsetNs: 8 }
@@ -103,7 +106,7 @@ export const ASSET_DEFINITIONS = [
     id: 'FLEX-03',
     name: 'Lazy-Wave Flexible Riser Bundle',
     type: 'Unbonded Flexible Riser',
-    depth: 1840,
+    depth: SEABED_DEPTH_M,
     lengthKm: 4.6,
     outerDiameterInches: 8.625,
     innerDiameterMm: 177.8,
@@ -118,7 +121,7 @@ export const ASSET_DEFINITIONS = [
     icon: 'Layers',
     criticality: 'HIGH',
     downtimeCostPerHourUsd: 55000,
-    description: '8-inch unbonded flexible riser with distributed buoyancy modules creating a lazy-wave decoupling catenary motion.',
+    description: '8-inch unbonded flexible riser with distributed buoyancy modules creating a lazy-wave decoupling catenary motion down to -1,850 m.',
     sensors: [
       { id: 'flex_bend_stiffener', name: 'Topside Bend Stiffener Curvature Inclinometer', type: 'Curvature', unit: '1/m', healthPct: 99.2, ptpSyncOffsetNs: 12 },
       { id: 'annulus_vent_gas', name: 'Annulus Gas Venting & Permeation Monitor', type: 'Permeation', unit: 'NL/h', healthPct: 98.0, ptpSyncOffsetNs: 14 }
@@ -132,7 +135,7 @@ export const ASSET_DEFINITIONS = [
     id: 'WIF-301',
     name: 'High-Pressure Water Injection Flowline',
     type: 'Subsea Water Injection Line',
-    depth: 1820,
+    depth: SEABED_DEPTH_M,
     lengthKm: 6.8,
     outerDiameterInches: 10.75,
     innerDiameterMm: 228.6,
@@ -146,7 +149,7 @@ export const ASSET_DEFINITIONS = [
     icon: 'Droplets',
     criticality: 'MEDIUM_HIGH',
     downtimeCostPerHourUsd: 38000,
-    description: '10-inch high-pressure treated seawater injection line with dissolved oxygen, biocide, and MIC bio-corrosion monitoring.',
+    description: '10-inch high-pressure treated seawater injection line with dissolved oxygen, biocide, and MIC bio-corrosion monitoring at -1,850 m.',
     sensors: [
       { id: 'wif_dissolved_o2', name: 'Dissolved Oxygen & SRB Bio-Corrosion Sensor', type: 'Electro-Chem', unit: 'ppb', healthPct: 98.2, ptpSyncOffsetNs: 16 },
       { id: 'wif_flow_rate', name: 'Electromagnetic Injection Water Flowmeter', type: 'Flow Rate', unit: 'm³/h', healthPct: 99.4, ptpSyncOffsetNs: 7 }
@@ -159,7 +162,7 @@ export const ASSET_DEFINITIONS = [
     id: 'PLEM-01',
     name: 'Pipeline End Manifold & Pigging Station',
     type: 'Subsea Manifold & Pig Launcher',
-    depth: 1835,
+    depth: SEABED_DEPTH_M,
     lengthKm: 0.1,
     outerDiameterInches: 16.0,
     innerDiameterMm: 350.0,
@@ -283,6 +286,31 @@ class TelemetryEngine {
       leakProbability: []
     };
 
+    this.acknowledgedAlerts = new Set();
+    this.alertOwners = {};
+    this.hitlAuditLog = [
+      {
+        id: 'AUTH-2026-0814-01',
+        missionId: 'SCR-01',
+        missionTitle: 'SCR-01 Riser Touchdown Zone (KP 2.85) Phased-Array Survey',
+        engineerName: 'J. Vance, PE (Lead Subsea Integrity)',
+        reason: 'Periodic baseline VIV validation post-cyclonic sea state.',
+        timestamp: '2026-08-14 09:30:15 UTC',
+        hash: '0x7f9c2a81b4d08e5c',
+        status: 'APPROVED & COMPLETED'
+      },
+      {
+        id: 'AUTH-2026-0902-02',
+        missionId: 'PFL-101',
+        missionTitle: 'PFL-101 PLET Elbow (KP 12.4) Ultrasonic Wall Scan',
+        engineerName: 'O. Smithson, PE (Subsea Systems Lead)',
+        reason: 'Proactive sand breakthrough verification after choke opening.',
+        timestamp: '2026-09-02 14:12:00 UTC',
+        hash: '0x4e2b918a0f67c3d9',
+        status: 'APPROVED & COMPLETED'
+      }
+    ];
+
     this.latestState = this.generateInitialState();
   }
 
@@ -373,6 +401,8 @@ class TelemetryEngine {
       escalationLog: this.escalationLog,
       interventionHistory: this.interventionHistory,
       pendingRovAuthorizations: this.pendingRovAuthorizations,
+      hitlAuditLog: [...this.hitlAuditLog],
+      acknowledgedAlerts: Array.from(this.acknowledgedAlerts),
       kpTelemetryProfile: this.generateKpProfile('NORMAL', 0),
       hydrateEnvelopeCurve: this.generateDynamicPvtHydrateEnvelope(14.2, 1680),
       vivSpectrum: this.generateVivSpectrum('NORMAL', 0),
@@ -439,7 +469,7 @@ class TelemetryEngine {
         dasAcousticDb: Number(acousticNoise.toFixed(1)),
         leakPlumePpm: Number(leakPlume.toFixed(1)),
         sensorHealthPct: Number(sensorHealth.toFixed(1)),
-        elevationM: Number((-1830 - Math.sin(kp * 0.6) * 45).toFixed(1))
+        elevationM: Number((-SEABED_DEPTH_M - Math.sin(kp * 0.6) * 35).toFixed(1))
       });
     }
 
@@ -662,15 +692,21 @@ class TelemetryEngine {
         asset.megInjectionRateLh = 185;
         asset.inspectionPriority = 'URGENT';
 
+        const alertId = `ALT-HYD-${this.tick}`;
         const alertObj = {
-          id: `ALT-HYD-${this.tick}`,
+          id: alertId,
+          assetId: 'PFL-101',
+          kp: 8.2,
+          targetTab: 'flow-assurance',
           timestamp: now.replace('T', ' ').slice(0, 19),
           tier: 'CRITICAL',
           severity: 'CRITICAL',
           category: 'FLOW_ASSURANCE',
-          title: 'DYNAMIC PVT HYDRATE BLOCKAGE RISK',
+          title: 'Dynamic PVT hydrate blockage risk',
           message: 'Fluid temperature (7.8°C) is 6.7°C below live PVT hydrate curve (14.5°C). RL agent clamped at 185 L/h safe boundary.',
-          action: 'Dynamic Inhibitor Surge & Subsea Trace Heating Activation'
+          action: 'Dynamic Inhibitor Surge & Subsea Trace Heating Activation',
+          acknowledged: this.acknowledgedAlerts.has(alertId),
+          owner: this.alertOwners[alertId] || 'Unassigned'
         };
         alerts.push(alertObj);
         if (this.tick % 4 === 1) this.triggerEscalationNotification(alertObj);
@@ -707,15 +743,21 @@ class TelemetryEngine {
         asset.crackLengthMm = 2.45 + (this.tick * 0.02);
         asset.inspectionPriority = 'CRITICAL_DISPATCH';
 
+        const alertId = `ALT-FAT-${this.tick}`;
         const alertObj = {
-          id: `ALT-FAT-${this.tick}`,
+          id: alertId,
+          assetId: 'SCR-01',
+          kp: 2.85,
+          targetTab: 'riser-fatigue',
           timestamp: now.replace('T', ' ').slice(0, 19),
           tier: 'CRITICAL',
           severity: 'CRITICAL',
           category: 'STRUCTURAL_HEALTH',
-          title: 'RISER TDZ VIV MODAL LOCK-IN (0.38 Hz)',
-          message: 'PTP-synced accelerometers confirm 0.38 Hz lock-in. TDZ stress reached 245 MPa. Paris flaw growth rate accelerated.',
-          action: 'Deploy ROV Phased-Array UT to KP 2.85 (Awaiting Engineer Sign-off)'
+          title: 'Riser TDZ VIV modal lock-in (0.38 Hz)',
+          message: 'PTP-synced accelerometers confirm 0.38 Hz lock-in. TDZ stress reached 245 MPa at -1,850 m depth. Paris flaw growth rate accelerated.',
+          action: 'Deploy ROV Phased-Array UT to KP 2.85 (Awaiting Engineer Sign-off)',
+          acknowledged: this.acknowledgedAlerts.has(alertId),
+          owner: this.alertOwners[alertId] || 'Unassigned'
         };
         alerts.push(alertObj);
         if (this.tick % 4 === 1) this.triggerEscalationNotification(alertObj);
@@ -752,15 +794,21 @@ class TelemetryEngine {
         asset.wallThicknessMm = Math.max(16.8, 17.8 - (this.tick * 0.01));
         asset.inspectionPriority = 'HIGH_PRIORITY';
 
+        const alertId = `ALT-ERO-${this.tick}`;
         const alertObj = {
-          id: `ALT-ERO-${this.tick}`,
+          id: alertId,
+          assetId: 'PFL-101',
+          kp: 12.4,
+          targetTab: 'corrosion-erosion',
           timestamp: now.replace('T', ' ').slice(0, 19),
           tier: 'CRITICAL',
           severity: 'CRITICAL',
           category: 'WALL_INTEGRITY',
-          title: 'ACCELERATED EROSION & H2S PITTING (2.85 mm/yr)',
+          title: 'Accelerated erosion & H2S pitting (2.85 mm/yr)',
           message: 'Sand breakthrough (84.5 PPM) at 11.8 m/s annular flow. Wall thickness at 17.8 mm. Bayesian P10 RUL is 68 days.',
-          action: 'Throttle Choke & Dispatch ROV Phased Array Tool (HITL Gate Active)'
+          action: 'Throttle Choke & Dispatch ROV Phased Array Tool (HITL Gate Active)',
+          acknowledged: this.acknowledgedAlerts.has(alertId),
+          owner: this.alertOwners[alertId] || 'Unassigned'
         };
         alerts.push(alertObj);
         if (this.tick % 4 === 1) this.triggerEscalationNotification(alertObj);
@@ -796,15 +844,21 @@ class TelemetryEngine {
         asset.sensorStreams.outletPressure = 187.6;
         asset.inspectionPriority = 'EMERGENCY_ISOLATION';
 
+        const alertId = `ALT-LEAK-${this.tick}`;
         const alertObj = {
-          id: `ALT-LEAK-${this.tick}`,
+          id: alertId,
+          assetId: 'PFL-101',
+          kp: 4.35,
+          targetTab: 'leak-detection',
           timestamp: now.replace('T', ' ').slice(0, 19),
           tier: 'CRITICAL',
           severity: 'CRITICAL',
           category: 'LEAK_CONTAINMENT',
-          title: 'MICRO-LEAK CONFIRMED AT KP 4.35 km',
-          message: 'PTP time-synced DAS acoustic wave localizes breach to KP 4.35. Discrepancy is 1.85 kg/s. Hydrocarbon optical plume confirmed.',
-          action: 'Execute Emergency Subsea Isolation ESD-1'
+          title: 'Micro-leak confirmed at KP 4.35 km',
+          message: 'PTP time-synced DAS acoustic wave localizes breach to KP 4.35 at -1,850 m. Discrepancy is 1.85 kg/s. Hydrocarbon optical plume confirmed.',
+          action: 'Execute Emergency Subsea Isolation ESD-1',
+          acknowledged: this.acknowledgedAlerts.has(alertId),
+          owner: this.alertOwners[alertId] || 'Unassigned'
         };
         alerts.push(alertObj);
         if (this.tick % 4 === 1) this.triggerEscalationNotification(alertObj);
@@ -836,15 +890,21 @@ class TelemetryEngine {
         asset.piggingLauncherStatus = 'DISPATCH_RECOMMENDED';
         asset.inspectionPriority = 'MEDIUM_PIGGING';
 
+        const alertId = `ALT-WAX-${this.tick}`;
         const alertObj = {
-          id: `ALT-WAX-${this.tick}`,
+          id: alertId,
+          assetId: 'PFL-101',
+          kp: 6.0,
+          targetTab: 'flow-assurance',
           timestamp: now.replace('T', ' ').slice(0, 19),
           tier: 'WARNING',
           severity: 'WARNING',
           category: 'FLOW_ASSURANCE',
-          title: 'PARAFFIN WAX DEPOSITION (3.4 mm Layer)',
+          title: 'Paraffin wax deposition (3.4 mm layer)',
           message: 'Subcooling below WAT (37.5°C) caused 24% effective ID reduction. Differential pressure increased +28 bar.',
-          action: 'Launch Intelligent Cleaning Pig from PLEM-01'
+          action: 'Launch Intelligent Cleaning Pig from PLEM-01',
+          acknowledged: this.acknowledgedAlerts.has(alertId),
+          owner: this.alertOwners[alertId] || 'Unassigned'
         };
         alerts.push(alertObj);
       }
@@ -883,6 +943,8 @@ class TelemetryEngine {
       escalationLog: this.escalationLog,
       interventionHistory: this.interventionHistory,
       pendingRovAuthorizations: this.pendingRovAuthorizations,
+      hitlAuditLog: [...this.hitlAuditLog],
+      acknowledgedAlerts: Array.from(this.acknowledgedAlerts),
       kpTelemetryProfile: this.generateKpProfile(s, this.tick),
       hydrateEnvelopeCurve: this.generateDynamicPvtHydrateEnvelope(pfl.waterCutPct || 14.2, pfl.gorScfStb || 1680),
       vivSpectrum: this.generateVivSpectrum(s, this.tick),
@@ -891,6 +953,54 @@ class TelemetryEngine {
     };
 
     this.notify();
+  }
+
+  acknowledgeAlert(alertId, engineerName = 'Subsea Control Room', note = 'Condition verified and under observation') {
+    this.acknowledgedAlerts.add(alertId);
+    if (this.latestState?.activeAlerts) {
+      this.latestState.activeAlerts = this.latestState.activeAlerts.map(a => {
+        if (a.id === alertId) {
+          return { ...a, acknowledged: true, acknowledgedBy: engineerName, acknowledgedAt: new Date().toISOString(), note };
+        }
+        return a;
+      });
+      this.latestState.acknowledgedAlerts = Array.from(this.acknowledgedAlerts);
+    }
+    this.notify();
+  }
+
+  assignAlertOwner(alertId, owner) {
+    this.alertOwners[alertId] = owner;
+    if (this.latestState?.activeAlerts) {
+      this.latestState.activeAlerts = this.latestState.activeAlerts.map(a => {
+        if (a.id === alertId) {
+          return { ...a, owner };
+        }
+        return a;
+      });
+    }
+    this.notify();
+  }
+
+  authorizeMission({ missionId, missionTitle, engineerName, reason }) {
+    const authEntry = {
+      id: `AUTH-2026-${Math.random().toString(36).substring(2, 6).toUpperCase()}`,
+      missionId,
+      missionTitle,
+      engineerName: engineerName || 'O. Smithson, PE (Subsea Systems Lead)',
+      reason: reason || 'Operational anomaly verified against dynamic PVT and fatigue thresholds.',
+      timestamp: new Date().toISOString().replace('T', ' ').slice(0, 19) + ' UTC',
+      hash: '0x' + Math.random().toString(16).substring(2, 18),
+      status: 'APPROVED & DISPATCHED'
+    };
+    this.hitlAuditLog.unshift(authEntry);
+    this.pendingRovAuthorizations[missionId] = true;
+    if (this.latestState) {
+      this.latestState.hitlAuditLog = [...this.hitlAuditLog];
+      this.latestState.pendingRovAuthorizations = { ...this.pendingRovAuthorizations };
+    }
+    this.notify();
+    return authEntry;
   }
 
   setScenario(scenarioKey) {

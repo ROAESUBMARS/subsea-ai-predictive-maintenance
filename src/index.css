@@ -1,34 +1,33 @@
-/* Industrial Control-Room Design System (DELFI / Palantir Foundry / Baker Hughes Standard) */
+/* SubseaGuard AI: Industrial Precision Design System (Sora + DM Sans + Tabular Numerals) */
 :root {
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
-  --font-heading: 'Inter', var(--font-sans);
+  --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Sora', 'DM Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 
-  /* Deep navy/charcoal base palette (#0A0E17 to #0D1526) */
-  --bg-abyss: #0a0e17;
-  --bg-trench: #0d1526;
+  /* Structural quiet layer palette */
+  --bg-base: #080d1a;
   --bg-surface: #111a2e;
-  --bg-surface-elevated: #16223b;
-  --bg-card: #0d1526;
-  --bg-card-hover: #121c33;
+  --bg-surface-raised: #16223b;
+  --bg-card: #0d1527;
+  --bg-card-hover: #131f38;
 
-  /* Industrial low-opacity 1px borders */
-  --border-subsea: rgba(45, 212, 224, 0.14);
-  --border-subsea-active: rgba(45, 212, 224, 0.45);
-  --border-subsea-glow: 0 0 12px rgba(45, 212, 224, 0.2);
+  /* Precise structural 1px borders */
+  --border-subtle: rgba(148, 163, 184, 0.12);
+  --border-subsea: rgba(56, 189, 248, 0.15);
+  --border-subsea-active: rgba(56, 189, 248, 0.45);
 
-  /* Precision Industrial Color Palette */
-  --cyan-primary: #2dd4e0;
-  --blue-marine: #38bdf8;
-  --teal-accent: #14b8a6;
-  --emerald-safe: #10b981;
-  --amber-warn: #f59e0b;
-  --crimson-crit: #ef4444;
-  --purple-ai: #a855f7;
+  /* Semantic State Palette: colors carry meaning ONLY (Nominal/Warn/Critical/Offline) */
+  --status-critical: #ef4444;
+  --status-warning: #f59e0b;
+  --status-warning-sand: #d6a36a;
+  --status-nominal: #10b981;
+  --status-nominal-sage: #8fae8b;
+  --status-offline: #64748b;
 
-  --text-primary: #f1f5f9;
+  --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
+  --text-sand: #c4a484;
 }
 
 * {
@@ -39,67 +38,80 @@
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--bg-abyss);
+  background-color: var(--bg-base);
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
   background-image: 
-    radial-gradient(circle at 50% 0%, rgba(45, 212, 224, 0.04) 0%, transparent 60%),
-    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-  background-size: 100% 100%, 28px 28px, 28px 28px;
+    radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.03) 0%, transparent 55%),
+    linear-gradient(to right, rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+  background-size: 100% 100%, 32px 32px, 32px 32px;
   background-attachment: fixed;
 }
 
-/* Typography Utility */
+/* Typography Scale */
 h1, h2, h3, h4, .font-heading {
   font-family: var(--font-heading);
-  letter-spacing: -0.015em;
+  letter-spacing: -0.02em;
+}
+
+.font-sans {
+  font-family: var(--font-sans);
 }
 
 .font-mono {
   font-family: var(--font-mono);
 }
 
-/* Industrial Precision Panels (Dense, low-radius, 1px crisp border) */
+/* Tabular Numerals: prevents live telemetry metrics and timers from jittering horizontally */
+.tabular-nums,
+.font-mono,
+[data-tabular-nums="true"] {
+  font-variant-numeric: tabular-nums;
+  -webkit-font-feature-settings: "tnum";
+  font-feature-settings: "tnum";
+}
+
+/* Industrial Precision Panels */
 .glass-panel {
   background: var(--bg-card);
-  border: 1px solid var(--border-subsea);
-  border-radius: 6px;
-  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.55);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.45);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .glass-panel:hover {
-  border-color: var(--border-subsea-active);
+  border-color: var(--border-subsea);
 }
 
 .glass-panel-glow {
-  box-shadow: 0 0 16px rgba(45, 212, 224, 0.15);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.12);
 }
 
 .glass-panel-crit {
-  border-color: rgba(239, 68, 68, 0.5);
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.45);
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.15);
 }
 
 .glass-panel-warn {
-  border-color: rgba(245, 158, 11, 0.5);
-  box-shadow: 0 0 16px rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.45);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.12);
 }
 
-/* Badges */
+/* Semantic Badges: clear, quiet tags */
 .badge {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  padding: 0.15rem 0.5rem;
+  padding: 0.18rem 0.55rem;
   border-radius: 4px;
   font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  letter-spacing: 0.04em;
   font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
 }
 
 .badge-normal {
@@ -115,10 +127,10 @@ h1, h2, h3, h4, .font-heading {
 }
 
 .badge-critical {
-  background: rgba(239, 68, 68, 0.18);
+  background: rgba(239, 68, 68, 0.16);
   color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.5);
-  animation: pulse-badge 2s infinite ease-in-out;
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  animation: pulse-critical 2.4s infinite ease-in-out;
 }
 
 .badge-ai {
@@ -128,64 +140,75 @@ h1, h2, h3, h4, .font-heading {
 }
 
 .badge-cyan {
-  background: rgba(45, 212, 224, 0.1);
-  color: #2dd4e0;
-  border: 1px solid rgba(45, 212, 224, 0.35);
+  background: rgba(56, 189, 248, 0.1);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
 }
 
-@keyframes pulse-badge {
+@keyframes pulse-critical {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.65; }
+  50% { opacity: 0.72; }
 }
 
-/* Custom Scrollbar */
+/* Demo Data Hatched Pattern Banner */
+.demo-hatched-banner {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(245, 158, 11, 0.08),
+    rgba(245, 158, 11, 0.08) 12px,
+    rgba(245, 158, 11, 0.14) 12px,
+    rgba(245, 158, 11, 0.14) 24px
+  );
+  border-bottom: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0e17;
+  background: #080d1a;
 }
 ::-webkit-scrollbar-thumb {
   background: #1e293b;
-  border-radius: 2px;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2dd4e0;
+  background: #38bdf8;
 }
 
-/* Button UI */
+/* Buttons */
 .btn-primary {
-  background: #2dd4e0;
-  color: #08101a;
+  background: #38bdf8;
+  color: #030712;
   font-weight: 700;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  padding: 0.45rem 0.9rem;
-  border-radius: 4px;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 6px;
   border: none;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
   transition: all 0.15s ease;
-  letter-spacing: 0.02em;
 }
 
 .btn-primary:hover {
-  background: #5eead4;
-  box-shadow: 0 0 14px rgba(45, 212, 224, 0.4);
+  background: #7dd3fc;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.35);
 }
 
 .btn-secondary {
   background: #111a2e;
   color: #e2e8f0;
   font-weight: 600;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  padding: 0.45rem 0.9rem;
-  border-radius: 4px;
-  border: 1px solid rgba(45, 212, 224, 0.2);
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -194,19 +217,19 @@ h1, h2, h3, h4, .font-heading {
 }
 
 .btn-secondary:hover {
-  background: rgba(45, 212, 224, 0.08);
-  border-color: rgba(45, 212, 224, 0.45);
-  color: #2dd4e0;
+  background: #16223b;
+  border-color: var(--border-subsea);
+  color: #38bdf8;
 }
 
 .btn-danger {
   background: #ef4444;
   color: #ffffff;
   font-weight: 700;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  padding: 0.45rem 0.9rem;
-  border-radius: 4px;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 6px;
   border: none;
   cursor: pointer;
   display: inline-flex;
@@ -218,4 +241,16 @@ h1, h2, h3, h4, .font-heading {
 .btn-danger:hover {
   background: #dc2626;
   box-shadow: 0 0 14px rgba(239, 68, 68, 0.4);
+}
+
+/* Accessibility: Respect Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

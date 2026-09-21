@@ -123,7 +123,7 @@ export default function DigitalTwinHub({ latestData, selectedAssetId, onSelectAs
           </div>
           <div className="text-[10px] text-slate-400 font-mono flex items-center justify-between">
             <span>Pipe-in-Pipe Aerogel:</span>
-            <span className="text-emerald-400">INTEACT (100%)</span>
+            <span className="text-emerald-400">Intact (100%)</span>
           </div>
         </div>
 
