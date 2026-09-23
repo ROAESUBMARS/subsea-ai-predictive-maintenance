@@ -108,6 +108,8 @@ export default function RiskMatrixFMEA({ latestData, onSelectAsset }) {
                         {assetsHere.map(a => (
                           <button
                             key={a.id}
+                            type="button"
+                            aria-label={`Inspect asset ${a.id} in matrix cell Consequence ${c}, Likelihood ${l}`}
                             onClick={() => onSelectAsset(a.id)}
                             className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded shadow-lg transition-transform hover:scale-110 mb-0.5 ${
                               a.status === 'CRITICAL' ? 'bg-rose-500 text-white animate-pulse' :
@@ -126,7 +128,7 @@ export default function RiskMatrixFMEA({ latestData, onSelectAsset }) {
             </div>
 
             {/* X-Axis Label (Consequence) */}
-            <div className="text-[10px] font-mono text-slate-400 uppercase tracking-widest text-center mt-2">
+            <div className="text-[10px] font-mono text-slate-300 uppercase tracking-widest text-center mt-2">
               Consequence / Safety Impact (1: Insignificant &rarr; 5: Catastrophic)
             </div>
           </div>

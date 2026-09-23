@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* SubseaGuard AI: Industrial Precision Design System (Sora + DM Sans + Tabular Numerals) */
 :root {
   --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
@@ -25,8 +29,8 @@
   --status-offline: #64748b;
 
   --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-secondary: #cbd5e1; /* slate-300 for high contrast (>8:1) against dark backgrounds */
+  --text-muted: #94a3b8;     /* slate-400 for secondary hints */
   --text-sand: #c4a484;
 }
 
@@ -243,8 +247,19 @@ h1, h2, h3, h4, .font-heading {
   box-shadow: 0 0 14px rgba(239, 68, 68, 0.4);
 }
 
-/* Accessibility: Respect Reduced Motion */
+/* Control Room A11y: High-Contrast Override for Operational Text */
+.text-slate-400 {
+  color: #cbd5e1 !important; /* Re-map text-slate-400 to slate-300 (>8:1 contrast on #0a0e17) */
+}
+
+/* Accessibility: Respect Reduced Motion (WCAG 2.1 2.3.3) */
 @media (prefers-reduced-motion: reduce) {
+  .animate-ping,
+  .animate-pulse,
+  .animate-spin,
+  .badge-critical {
+    animation: none !important;
+  }
   *,
   ::before,
   ::after {
@@ -254,3 +269,4 @@ h1, h2, h3, h4, .font-heading {
     scroll-behavior: auto !important;
   }
 }
+

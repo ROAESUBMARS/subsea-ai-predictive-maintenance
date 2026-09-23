@@ -46,30 +46,36 @@ export default function DigitalTwinHub({ latestData, selectedAssetId, onSelectAs
                 TWIN SYNC (0.01s LATENCY)
               </span>
             </div>
-            <p className="text-xs text-slate-400 font-mono mt-0.5">
+            <p className="text-xs text-slate-300 font-mono mt-0.5">
               Multi-Domain Physics Coupling • Boundary Condition Calibration • Real-Time Seabed Hydrodynamics (-1,850m)
             </p>
           </div>
         </div>
 
-        {/* View Switcher */}
-        <div className="flex items-center gap-1 bg-[#050e20] p-1 rounded-lg border border-cyan-500/20 text-xs font-mono">
+        {/* View Switcher (WAI-ARIA Tablist) */}
+        <div role="tablist" aria-label="Digital twin view switcher" className="flex items-center gap-1 bg-[#050e20] p-1 rounded-lg border border-cyan-500/20 text-xs font-mono">
           <button
+            type="button"
+            role="tab"
+            aria-selected={activeTwinView === 'BATHYMETRY_MAP'}
             onClick={() => setActiveTwinView('BATHYMETRY_MAP')}
             className={`px-3 py-1.5 rounded transition-all ${
               activeTwinView === 'BATHYMETRY_MAP'
                 ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-bold'
-                : 'text-slate-400 hover:text-slate-200'
+                : 'text-slate-300 hover:text-white'
             }`}
           >
             2.5D Seabed Bathymetry
           </button>
           <button
+            type="button"
+            role="tab"
+            aria-selected={activeTwinView === 'CROSS_SECTION_FEM'}
             onClick={() => setActiveTwinView('CROSS_SECTION_FEM')}
             className={`px-3 py-1.5 rounded transition-all ${
               activeTwinView === 'CROSS_SECTION_FEM'
                 ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-bold'
-                : 'text-slate-400 hover:text-slate-200'
+                : 'text-slate-300 hover:text-white'
             }`}
           >
             Pipe Cross-Section & Stress FEM

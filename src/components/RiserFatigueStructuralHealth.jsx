@@ -148,33 +148,49 @@ export default function RiserFatigueStructuralHealth({ latestData, onSelectAsset
         </div>
 
         {/* Mode Selector */}
-        <div className="flex items-center gap-1 bg-[#050e20] p-1 rounded-lg border border-purple-500/20 text-xs font-mono">
+        <div 
+          role="tablist"
+          aria-label="Riser fatigue structural analysis modes"
+          className="flex items-center gap-1 bg-[#050e20] p-1 rounded-lg border border-purple-500/20 text-xs font-mono"
+        >
           <button
+            role="tab"
+            id="tab-viv-spectrum"
+            aria-selected={activeAnalysisMode === 'VIV_SPECTRUM'}
+            aria-controls="panel-riser-fatigue"
             onClick={() => setActiveAnalysisMode('VIV_SPECTRUM')}
             className={`px-3 py-1.5 rounded transition-all ${
               activeAnalysisMode === 'VIV_SPECTRUM'
                 ? 'bg-purple-500/30 text-purple-300 border border-purple-400/40 font-bold'
-                : 'text-slate-400 hover:text-slate-200'
+                : 'text-slate-300 hover:text-white'
             }`}
           >
             VIV Spectrum (FFT)
           </button>
           <button
+            role="tab"
+            id="tab-rainflow-stress"
+            aria-selected={activeAnalysisMode === 'RAINFLOW_STRESS'}
+            aria-controls="panel-riser-fatigue"
             onClick={() => setActiveAnalysisMode('RAINFLOW_STRESS')}
             className={`px-3 py-1.5 rounded transition-all ${
               activeAnalysisMode === 'RAINFLOW_STRESS'
                 ? 'bg-purple-500/30 text-purple-300 border border-purple-400/40 font-bold'
-                : 'text-slate-400 hover:text-slate-200'
+                : 'text-slate-300 hover:text-white'
             }`}
           >
             Rainflow S-N
           </button>
           <button
+            role="tab"
+            id="tab-paris-crack"
+            aria-selected={activeAnalysisMode === 'PARIS_CRACK'}
+            aria-controls="panel-riser-fatigue"
             onClick={() => setActiveAnalysisMode('PARIS_CRACK')}
             className={`px-3 py-1.5 rounded transition-all ${
               activeAnalysisMode === 'PARIS_CRACK'
                 ? 'bg-purple-500/30 text-purple-300 border border-purple-400/40 font-bold'
-                : 'text-slate-400 hover:text-slate-200'
+                : 'text-slate-300 hover:text-white'
             }`}
           >
             Crack Growth (da/dN)
@@ -278,7 +294,19 @@ export default function RiserFatigueStructuralHealth({ latestData, onSelectAsset
       </div>
 
       {/* Main Structural Chart View */}
-      <div className="glass-panel p-4 flex flex-col justify-between">
+      <div 
+        role="tabpanel"
+        id="panel-riser-fatigue"
+        aria-labelledby={
+          activeAnalysisMode === 'VIV_SPECTRUM' 
+            ? 'tab-viv-spectrum' 
+            : activeAnalysisMode === 'RAINFLOW_STRESS' 
+              ? 'tab-rainflow-stress' 
+              : 'tab-paris-crack'
+        }
+        tabIndex={0}
+        className="glass-panel p-4 flex flex-col justify-between"
+      >
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-heading font-bold text-white flex items-center gap-2">
             <Activity className="w-4 h-4 text-purple-400" />

@@ -2,7 +2,39 @@ import React, { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import Navbar from './components/Navbar';
 import KPIHeader from './components/KPIHeader';
 import RoleViewsContainer from './components/RoleViewsContainer';
+import NotFound from './components/NotFound';
 import { telemetryEngine, SIMULATION_SCENARIOS, ASSET_DEFINITIONS, SEABED_DEPTH_M } from './services/telemetryEngine';
+
+const VALID_ROUTES = {
+  '': 'control-room',
+  '/': 'control-room',
+  '/control-room': 'control-room',
+  '/condition-monitoring': 'condition-monitoring',
+  '/digital-twin': 'digital-twin',
+  '/rov-deployment': 'rov-deployment',
+  '/alerting-escalation': 'alerting-escalation',
+  '/inspection-cbi': 'inspection-cbi',
+  '/fault-classification': 'fault-classification',
+  '/flow-assurance': 'flow-assurance',
+  '/corrosion-erosion': 'corrosion-erosion',
+  '/riser-fatigue': 'riser-fatigue',
+  '/leak-detection': 'leak-detection',
+};
+
+function getRouteStateFromPath(pathname) {
+  let clean = pathname.endsWith('/') && pathname.length > 1 ? pathname.slice(0, -1) : pathname;
+  let appRelative = clean;
+  if (clean === '/app') {
+    appRelative = '/';
+  } else if (clean.startsWith('/app/')) {
+    appRelative = clean.slice(4); // /app/digital-twin -> /digital-twin
+  }
+
+  if (appRelative in VALID_ROUTES) {
+    return { tab: VALID_ROUTES[appRelative], isNotFound: false, path: clean };
+  }
+  return { tab: 'control-room', isNotFound: true, path: clean };
+}
 
 // Code-splitting via React.lazy for performance (reduces first paint initial bundle)
 const IndustrialControlRoomDashboard = lazy(() => import('./components/IndustrialControlRoomDashboard'));
@@ -32,9 +64,15 @@ function HubLoadingFallback() {
 }
 
 export default function App() {
+  const initialRoute = typeof window !== 'undefined'
+    ? getRouteStateFromPath(window.location.pathname)
+    : { tab: 'control-room', isNotFound: false, path: '/' };
+
   const [latestData, setLatestData] = useState(() => telemetryEngine.getLatestData());
   const [selectedAssetId, setSelectedAssetId] = useState('PFL-101');
-  const [activeTab, setActiveTab] = useState('control-room');
+  const [activeTab, setActiveTab] = useState(initialRoute.tab);
+  const [isNotFound, setIsNotFound] = useState(initialRoute.isNotFound);
+  const [currentPath, setCurrentPath] = useState(initialRoute.path);
   const [userRole, setUserRole] = useState('engineer'); // 'technician' | 'engineer' | 'subsea_engineer' | 'manager'
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentScenario, setCurrentScenario] = useState('NORMAL');
@@ -45,6 +83,31 @@ export default function App() {
   const [soundEnabled, setSoundEnabled] = useState(false);
 
   const audioCtxRef = useRef(null);
+
+  const playAlarmBeep = () => {
+    try {
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const ctx = audioCtxRef.current;
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.04, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.15);
+    } catch {
+      // Ignore audio errors
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = telemetryEngine.subscribe((data) => {
@@ -82,29 +145,32 @@ export default function App() {
     }
   };
 
-  const playAlarmBeep = () => {
-    try {
-      if (!audioCtxRef.current) {
-        audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      const ctx = audioCtxRef.current;
-      if (ctx.state === 'suspended') {
-        ctx.resume();
-      }
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(880, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.15);
-      gain.gain.setValueAtTime(0.04, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.15);
-    } catch (e) {
-      // Ignore audio errors
+  // Popstate history listener for client-side routing
+  useEffect(() => {
+    const handlePopState = () => {
+      const route = getRouteStateFromPath(window.location.pathname);
+      setActiveTab(route.tab);
+      setIsNotFound(route.isNotFound);
+      setCurrentPath(route.path);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const handleSelectTab = (tabId) => {
+    setActiveTab(tabId);
+    setIsNotFound(false);
+    const isAppPrefix = typeof window !== 'undefined' && (window.location.pathname.startsWith('/app') || window.location.pathname === '/app');
+    const base = isAppPrefix ? '/app' : '';
+    const targetUrl = tabId === 'control-room'
+      ? (isAppPrefix ? '/app' : '/')
+      : `${base}/${tabId}`;
+
+    if (typeof window !== 'undefined' && window.location.pathname !== targetUrl) {
+      window.history.pushState(null, '', targetUrl);
     }
+    setCurrentPath(targetUrl);
   };
 
   let unacknowledgedCount = 0;
@@ -123,8 +189,8 @@ export default function App() {
         onSelectScenario={handleScenarioChange}
         isPlaying={isPlaying}
         onTogglePlay={() => setIsPlaying(!isPlaying)}
-        activeTab={activeTab}
-        onSelectTab={setActiveTab}
+        activeTab={isNotFound ? '' : activeTab}
+        onSelectTab={handleSelectTab}
         onOpenReport={() => setIsReportOpen(true)}
         onOpenArchitecture={() => setIsArchitectureOpen(true)}
         soundEnabled={soundEnabled}
@@ -160,46 +226,61 @@ export default function App() {
       {/* Main Dashboard Container */}
       <main className="flex-1 max-w-[1750px] w-full mx-auto p-3.5 lg:p-5 space-y-4">
         
-        {/* KPI Executive Summary Header (Sentence-case + Tabular Numerals) */}
-        <KPIHeader
-          latestData={latestData}
-          onSelectAsset={handleSelectAsset}
-        />
-
-        {/* Tailored Persona View for Technician or Manager */}
-        {userRole !== 'engineer' && (
-          <div className="mb-4">
-            <RoleViewsContainer
-              userRole={userRole}
+        {isNotFound ? (
+          <NotFound
+            currentPath={currentPath}
+            onNavigateHome={() => handleSelectTab('control-room')}
+            onSelectTab={handleSelectTab}
+          />
+        ) : (
+          <>
+            {/* KPI Executive Summary Header (Sentence-case + Tabular Numerals) */}
+            <KPIHeader
               latestData={latestData}
-              selectedAssetId={selectedAssetId}
               onSelectAsset={handleSelectAsset}
-              onNavigateTab={(tab) => {
-                setActiveTab(tab);
-                setUserRole('engineer');
-              }}
             />
-          </div>
-        )}
 
-        {/* Suspense Container for Code-Split Modules */}
-        <Suspense fallback={<HubLoadingFallback />}>
-          
-          {/* Stage 1: Control Room Dashboard (5 Zones) */}
-          {activeTab === 'control-room' && (
-            <div className="animate-fade-in">
-              <IndustrialControlRoomDashboard
-                latestData={latestData}
-                selectedAssetId={selectedAssetId}
-                onSelectAsset={handleSelectAsset}
-                onSelectScenario={handleScenarioChange}
-                userRole={userRole}
-                onNavigateTab={setActiveTab}
-                selectedKP={selectedKP}
-                onSelectKP={setSelectedKP}
-              />
-            </div>
-          )}
+            {/* Tailored Persona View for Technician or Manager */}
+            {userRole !== 'engineer' && (
+              <div className="mb-4">
+                <RoleViewsContainer
+                  userRole={userRole}
+                  latestData={latestData}
+                  selectedAssetId={selectedAssetId}
+                  onSelectAsset={handleSelectAsset}
+                  onNavigateTab={(tab) => {
+                    handleSelectTab(tab);
+                    setUserRole('engineer');
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Suspense Container for Code-Split Modules */}
+            <Suspense fallback={<HubLoadingFallback />}>
+              <section
+                role="tabpanel"
+                id={`panel-${activeTab}`}
+                aria-labelledby={`tab-${activeTab}`}
+                tabIndex={0}
+                className="focus:outline-none"
+              >
+              
+              {/* Stage 1: Control Room Dashboard (5 Zones) */}
+              {activeTab === 'control-room' && (
+                <div className="animate-fade-in">
+                  <IndustrialControlRoomDashboard
+                    latestData={latestData}
+                    selectedAssetId={selectedAssetId}
+                    onSelectAsset={handleSelectAsset}
+                    onSelectScenario={handleScenarioChange}
+                    userRole={userRole}
+                    onNavigateTab={handleSelectTab}
+                    selectedKP={selectedKP}
+                    onSelectKP={setSelectedKP}
+                  />
+                </div>
+              )}
 
           {/* Stage 2: Routes & Spatial Profile */}
           {activeTab === 'condition-monitoring' && (
@@ -243,7 +324,7 @@ export default function App() {
               <AlertingAndEscalationHub
                 latestData={latestData}
                 onSelectAsset={handleSelectAsset}
-                onNavigateTab={setActiveTab}
+                onNavigateTab={handleSelectTab}
               />
             </div>
           )}
@@ -306,12 +387,15 @@ export default function App() {
             </div>
           )}
 
-        </Suspense>
+              </section>
+            </Suspense>
+          </>
+        )}
 
       </main>
 
       {/* Footer System Status Bar (Sentence Case) */}
-      <footer className="bg-[#050912] border-t border-slate-800/80 py-2.5 px-6 text-xs font-sans text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <footer className="bg-[#050912] border-t border-slate-800/80 py-2.5 px-6 text-xs font-sans text-slate-300 flex flex-col sm:flex-row items-center justify-between gap-2">
         <div className="flex items-center flex-wrap gap-2.5">
           <span className="flex items-center gap-1.5 text-emerald-400">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -327,7 +411,7 @@ export default function App() {
           <span>Role active: <strong className="text-amber-300 capitalize">{userRole.replace('_', ' ')}</strong></span>
         </div>
 
-        <div className="text-slate-500 text-[11px] font-sans">
+        <div className="text-slate-300 text-[11px] font-sans">
           SubseaGuard AI • Deepwater Subsea Predictive Maintenance • API 17D / DNV-RP-F116 / ISO 14224
         </div>
       </footer>
@@ -343,7 +427,7 @@ export default function App() {
             assetId={selectedAssetId}
             latestData={latestData}
             onClose={() => setIsDetailModalOpen(false)}
-            onNavigateTab={(tab) => setActiveTab(tab)}
+            onNavigateTab={(tab) => handleSelectTab(tab)}
           />
         )}
 

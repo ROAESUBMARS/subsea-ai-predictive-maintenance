@@ -69,13 +69,13 @@ export default function IndustrialControlRoomDashboard({
   const [isRovDispatchModalOpen, setIsRovDispatchModalOpen] = useState(false);
   const [activeDispatchMission, setActiveDispatchMission] = useState(null);
   const [engineerSignoffConfirmed, setEngineerSignoffConfirmed] = useState(false);
-  const [engineerName, setEngineerName] = useState('Lead Subsea Integrity Engineer (O. Smithson, PE)');
+  const [engineerName, setEngineerName] = useState('Lead Subsea Integrity Engineer (O. Smithson, Simulated)');
   const [justificationReason, setJustificationReason] = useState('Verified against acoustic DAS anomaly threshold and DNV-RP-F116 guidelines.');
   const [dispatchStatus, setDispatchStatus] = useState('READY');
 
   // Alert Acknowledgment Modal State
   const [ackAlertModal, setAckAlertModal] = useState(null);
-  const [ackEngineerName, setAckEngineerName] = useState('O. Smithson, PE (Control Room Lead)');
+  const [ackEngineerName, setAckEngineerName] = useState('O. Smithson (Simulated) — Control Room Lead');
   const [ackNote, setAckNote] = useState('Telemetry anomaly cross-referenced against acoustic DAS stream. Observation active.');
 
   if (!latestData || !latestData.assets) return null;
@@ -320,6 +320,8 @@ export default function IndustrialControlRoomDashboard({
                       type="button"
                       key={i}
                       onClick={() => onSelectKP && onSelectKP(isSelected ? null : node.kp)}
+                      aria-label={`Select sensor node ${node.name} at KP ${node.kp} km`}
+                      aria-pressed={isSelected}
                       className={`relative z-10 flex flex-col items-center cursor-pointer group focus:outline-none transition-transform ${
                         isSelected ? 'scale-110' : 'hover:scale-105'
                       }`}
@@ -335,7 +337,7 @@ export default function IndustrialControlRoomDashboard({
                       <span className={`text-[9px] font-bold mt-1 ${isSelected ? 'text-cyan-300 underline' : 'text-slate-300'}`}>
                         KP {node.kp}
                       </span>
-                      <span className="text-[8px] text-slate-500">
+                      <span className="text-[8px] text-slate-400">
                         {node.label}
                       </span>
                     </button>
@@ -353,6 +355,7 @@ export default function IndustrialControlRoomDashboard({
                   <button
                     type="button"
                     onClick={() => onSelectKP && onSelectKP(null)}
+                    aria-label="Clear spatial location filter"
                     className="px-2 py-0.5 text-[10px] font-mono bg-slate-800 hover:bg-slate-700 text-slate-200 rounded border border-slate-600 transition-colors"
                   >
                     Clear Filter ✕
@@ -394,16 +397,20 @@ export default function IndustrialControlRoomDashboard({
                 </h3>
               </div>
 
-              {/* Time Window Buttons */}
-              <div className="flex items-center gap-1 bg-[#0a0e17] p-0.5 rounded border border-slate-800 font-mono text-[10px]">
+              {/* Time Window Buttons (WAI-ARIA Radio Group) */}
+              <div role="radiogroup" aria-label="Trend chart time window" className="flex items-center gap-1 bg-[#0a0e17] p-0.5 rounded border border-slate-800 font-mono text-[10px]">
                 {['5m', '1h', '24h', '7d'].map(tw => (
                   <button
                     key={tw}
+                    type="button"
+                    role="radio"
+                    aria-checked={timeWindow === tw}
+                    aria-label={`Show ${tw} trend window`}
                     onClick={() => setTimeWindow(tw)}
                     className={`px-2 py-0.5 rounded transition-all ${
                       timeWindow === tw
                         ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-bold'
-                        : 'text-slate-400 hover:text-slate-200'
+                        : 'text-slate-300 hover:text-white'
                     }`}
                   >
                     {tw}
@@ -412,7 +419,7 @@ export default function IndustrialControlRoomDashboard({
               </div>
             </div>
 
-            <p className="text-[11px] text-slate-400 font-mono mb-2">
+            <p className="text-[11px] text-slate-300 font-mono mb-2">
               Multi-channel time-series monitoring gradual pressure/thermal drift toward failure boundaries.
             </p>
 
@@ -632,9 +639,10 @@ export default function IndustrialControlRoomDashboard({
                           <button
                             type="button"
                             onClick={() => setAckAlertModal(alert)}
+                            aria-label={isAck ? `View acknowledgment details for alert ${alert.id}` : `Acknowledge alert ${alert.id}`}
                             className={`py-1 px-1.5 rounded text-[10px] font-mono font-medium border flex items-center justify-center gap-1 transition-colors ${
                               isAck 
-                                ? 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700' 
+                                ? 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700' 
                                 : 'bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 border-cyan-500/50'
                             }`}
                           >
@@ -650,6 +658,7 @@ export default function IndustrialControlRoomDashboard({
                                 telemetryEngine.assignAlertOwner(alert.id, newOwner.trim());
                               }
                             }}
+                            aria-label={`Assign engineer to alert ${alert.id}`}
                             className="py-1 px-1.5 rounded text-[10px] font-mono bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center justify-center gap-1 transition-colors"
                           >
                             <UserCheck className="w-3 h-3" />
@@ -666,6 +675,7 @@ export default function IndustrialControlRoomDashboard({
                                 onNavigateTab(alert.targetTab);
                               }
                             }}
+                            aria-label={`Jump to asset diagnostics for alert ${alert.id}`}
                             className="py-1 px-1.5 rounded text-[10px] font-mono bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center justify-center gap-1 transition-colors"
                           >
                             <ArrowRight className="w-3 h-3" />
@@ -675,6 +685,7 @@ export default function IndustrialControlRoomDashboard({
                           <button
                             type="button"
                             onClick={() => handleOpenRovDispatch(alert)}
+                            aria-label={`Open human-in-the-loop ROV dispatch gate for alert ${alert.id}`}
                             className="py-1 px-1.5 rounded text-[10px] font-mono bg-gradient-to-r from-rose-500 to-amber-500 hover:brightness-110 text-black font-bold flex items-center justify-center gap-1 transition-all"
                           >
                             <Camera className="w-3 h-3" />
@@ -708,17 +719,29 @@ export default function IndustrialControlRoomDashboard({
       {/* ========================================================================= */}
       {isRovDispatchModalOpen && activeDispatchMission && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in font-mono text-xs">
-          <div className="glass-panel w-full max-w-xl flex flex-col overflow-hidden border border-rose-500/40 shadow-[0_0_50px_rgba(239,68,68,0.3)]">
+          <div 
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="rov-gate-modal-title"
+            className="glass-panel w-full max-w-xl flex flex-col overflow-hidden border border-rose-500/40 shadow-[0_0_50px_rgba(239,68,68,0.3)]"
+          >
             
             {/* Header */}
             <div className="flex items-center justify-between p-4 bg-[#0a0e17] border-b border-rose-500/30">
               <div className="flex items-center gap-2">
                 <AlertOctagon className="w-5 h-5 text-rose-400 animate-pulse" />
-                <h3 className="text-sm font-heading font-bold text-white uppercase">
+                <h3 id="rov-gate-modal-title" className="text-sm font-heading font-bold text-white uppercase">
                   Subsea ROV Mission Authorization Gate (HITL)
                 </h3>
               </div>
-              <button onClick={() => setIsRovDispatchModalOpen(false)} className="text-slate-400 hover:text-white">✕</button>
+              <button 
+                type="button"
+                onClick={() => setIsRovDispatchModalOpen(false)} 
+                aria-label="Close ROV mission authorization dialog"
+                className="text-slate-400 hover:text-white"
+              >
+                ✕
+              </button>
             </div>
 
             <form onSubmit={handleExecuteDispatch} className="p-5 space-y-3.5 bg-[#0d1526]">
@@ -812,15 +835,27 @@ export default function IndustrialControlRoomDashboard({
       {/* ========================================================================= */}
       {ackAlertModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in font-mono text-xs">
-          <div className="glass-panel w-full max-w-lg flex flex-col overflow-hidden border border-cyan-500/40 shadow-[0_0_50px_rgba(6,182,212,0.2)]">
+          <div 
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="ack-alert-modal-title"
+            className="glass-panel w-full max-w-lg flex flex-col overflow-hidden border border-cyan-500/40 shadow-[0_0_50px_rgba(6,182,212,0.2)]"
+          >
             <div className="flex items-center justify-between p-4 bg-[#0a0e17] border-b border-cyan-500/30">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-cyan-400" />
-                <h3 className="text-sm font-heading font-bold text-white uppercase">
+                <h3 id="ack-alert-modal-title" className="text-sm font-heading font-bold text-white uppercase">
                   Acknowledge Alert ({ackAlertModal.id})
                 </h3>
               </div>
-              <button onClick={() => setAckAlertModal(null)} className="text-slate-400 hover:text-white">✕</button>
+              <button 
+                type="button"
+                onClick={() => setAckAlertModal(null)} 
+                aria-label="Close alert acknowledgment dialog"
+                className="text-slate-400 hover:text-white"
+              >
+                ✕
+              </button>
             </div>
 
             <form onSubmit={handleConfirmAcknowledge} className="p-5 space-y-3 bg-[#0d1526]">

@@ -238,7 +238,11 @@ export default function PrognosticsPanel({
         </div>
 
         {/* Asset Selector Buttons */}
-        <div className="flex flex-wrap items-center gap-1.5 bg-[#071328] p-1 rounded-lg border border-cyan-500/20">
+        <div 
+          role="tablist"
+          aria-label="Select asset for prognostics"
+          className="flex flex-wrap items-center gap-1.5 bg-[#071328] p-1 rounded-lg border border-cyan-500/20"
+        >
           {ASSET_DEFINITIONS.map(asset => {
             const isSel = asset.id === currentAssetKey;
             const assetData = latestData.assets[asset.id];
@@ -246,11 +250,16 @@ export default function PrognosticsPanel({
             return (
               <button
                 key={asset.id}
+                role="tab"
+                id={`tab-prognostics-${asset.id}`}
+                aria-selected={isSel}
+                aria-controls="panel-prognostics-detail"
+                aria-label={`Inspect prognostics for asset ${asset.id}${isCrit ? ' - critical status alert' : ''}`}
                 onClick={() => onSelectAsset(asset.id)}
                 className={`px-3 py-1 text-xs font-mono rounded transition-all flex items-center gap-1.5 ${
                   isSel 
                     ? 'bg-cyan-500/25 text-cyan-300 font-semibold border border-cyan-400/40 shadow-[0_0_10px_rgba(0,242,254,0.2)]' 
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
                 }`}
               >
                 {isCrit && <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-ping" />}
@@ -262,7 +271,13 @@ export default function PrognosticsPanel({
       </div>
 
       {/* Main Prognostics Split (RUL Trajectory & XAI Feature Attribution) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <div 
+        role="tabpanel"
+        id="panel-prognostics-detail"
+        aria-labelledby={`tab-prognostics-${currentAssetKey}`}
+        tabIndex={0}
+        className="grid grid-cols-1 lg:grid-cols-12 gap-5"
+      >
         
         {/* Left: RUL Degradation Trajectory Chart */}
         <div className="lg:col-span-7 glass-panel p-4 flex flex-col justify-between">

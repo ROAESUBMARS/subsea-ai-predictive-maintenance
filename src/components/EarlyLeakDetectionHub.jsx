@@ -118,7 +118,7 @@ export default function EarlyLeakDetectionHub({ latestData, onSelectAsset }) {
                 {isLeak ? 'LEAK ALARM (P1 CRIT)' : 'INTEGRITY SECURE'}
               </span>
             </div>
-            <p className="text-xs text-slate-400 font-mono mt-0.5">
+            <p className="text-xs text-slate-300 font-mono mt-0.5">
               Mass/Volume Balance Anomaly Engine • Negative Pressure Wave (NPW) Time-of-Flight • Subsea DAS Fiber Optics
             </p>
           </div>
@@ -127,6 +127,8 @@ export default function EarlyLeakDetectionHub({ latestData, onSelectAsset }) {
         {/* Rapid Isolation Trigger Button */}
         {isLeak && (
           <button
+            type="button"
+            aria-label="Execute emergency subsea ESD isolation sequence"
             onClick={handleTriggerIsolation}
             disabled={isolatedValve}
             className="px-3.5 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-mono text-xs font-bold flex items-center gap-2 shadow-[0_0_20px_rgba(239,68,68,0.6)] animate-pulse"

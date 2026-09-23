@@ -222,8 +222,8 @@ export default function BearingDiagnosticsHub({
         </div>
 
         {/* Rotating Asset Selector */}
-        <div className="flex items-center gap-1.5 bg-[#071328] p-1.5 rounded-xl border border-cyan-500/25">
-          <span className="text-[10px] font-mono text-slate-400 px-2 uppercase font-semibold">Asset:</span>
+        <div role="tablist" aria-label="Rotating asset selection" className="flex items-center gap-1.5 bg-[#071328] p-1.5 rounded-xl border border-cyan-500/25">
+          <span className="text-[10px] font-mono text-slate-300 px-2 uppercase font-semibold">Asset:</span>
           {rotatingAssets.map(asset => {
             const isSel = asset.id === currentAssetId;
             const assetData = latestData.assets[asset.id];
@@ -231,11 +231,15 @@ export default function BearingDiagnosticsHub({
             return (
               <button
                 key={asset.id}
+                type="button"
+                role="tab"
+                aria-selected={isSel}
+                aria-label={`Select rotating asset ${asset.id}`}
                 onClick={() => onSelectAsset(asset.id)}
                 className={`px-3 py-1.5 text-xs font-mono rounded-lg transition-all flex items-center gap-1.5 ${
                   isSel 
                     ? 'bg-cyan-500/25 text-cyan-300 font-semibold border border-cyan-400/40 shadow-[0_0_12px_rgba(0,242,254,0.25)]' 
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
                 }`}
               >
                 {isCrit && <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />}
@@ -537,6 +541,9 @@ export default function BearingDiagnosticsHub({
               return (
                 <button
                   key={key}
+                  type="button"
+                  aria-pressed={isAct}
+                  aria-label={`Select simulation scenario ${sc.name}`}
                   onClick={() => onSelectScenario(key)}
                   className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between ${
                     isAct 

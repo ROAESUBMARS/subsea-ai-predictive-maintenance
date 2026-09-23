@@ -153,6 +153,7 @@ export default function WorkOrdersAndAlerts({
                   <span className="text-slate-300">RUL: <strong className="text-white">{alt.timeToFail}</strong></span>
                   <button
                     onClick={() => onSelectAsset(alt.assetId)}
+                    aria-label={`Diagnose subsea node ${alt.assetId} for ${alt.title}`}
                     className="btn-secondary text-[11px] py-1 px-2.5"
                   >
                     Diagnose Node &rarr;
@@ -176,7 +177,7 @@ export default function WorkOrdersAndAlerts({
                 Dispatch Autonomous ROV Flight Mission
               </h3>
             </div>
-            <p className="text-xs text-slate-400 font-mono mb-4">
+            <p className="text-xs text-slate-300 font-mono mb-4">
               Configure tooling payload and dispatch Tether Management System (TMS) launch for subsea predictive intervention.
             </p>
 
@@ -190,8 +191,9 @@ export default function WorkOrdersAndAlerts({
             <form onSubmit={handleDispatch} className="space-y-3 text-xs font-mono">
               
               <div>
-                <label className="block text-slate-400 uppercase text-[10px] mb-1">Target Subsea Asset</label>
+                <label htmlFor="wo-target-asset" className="block text-slate-300 uppercase text-[10px] mb-1">Target Subsea Asset</label>
                 <select
+                  id="wo-target-asset"
                   value={formAsset}
                   onChange={e => setFormAsset(e.target.value)}
                   className="w-full bg-[#081224] text-white p-2 rounded border border-cyan-500/20 focus:border-cyan-400 focus:outline-none"
@@ -203,8 +205,9 @@ export default function WorkOrdersAndAlerts({
               </div>
 
               <div>
-                <label className="block text-slate-400 uppercase text-[10px] mb-1">Intervention Mission Scope</label>
+                <label htmlFor="wo-mission-scope" className="block text-slate-300 uppercase text-[10px] mb-1">Intervention Mission Scope</label>
                 <input
+                  id="wo-mission-scope"
                   type="text"
                   value={formMission}
                   onChange={e => setFormMission(e.target.value)}
@@ -215,8 +218,9 @@ export default function WorkOrdersAndAlerts({
               </div>
 
               <div>
-                <label className="block text-slate-400 uppercase text-[10px] mb-1">Tooling Package & Manipulator</label>
+                <label htmlFor="wo-tooling-pkg" className="block text-slate-300 uppercase text-[10px] mb-1">Tooling Package & Manipulator</label>
                 <select
+                  id="wo-tooling-pkg"
                   value={formTooling}
                   onChange={e => setFormTooling(e.target.value)}
                   className="w-full bg-[#081224] text-white p-2 rounded border border-cyan-500/20 focus:border-cyan-400 focus:outline-none"
@@ -230,8 +234,9 @@ export default function WorkOrdersAndAlerts({
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-slate-400 uppercase text-[10px] mb-1">Priority Tier</label>
+                  <label htmlFor="wo-priority" className="block text-slate-300 uppercase text-[10px] mb-1">Priority Tier</label>
                   <select
+                    id="wo-priority"
                     value={formPriority}
                     onChange={e => setFormPriority(e.target.value)}
                     className="w-full bg-[#081224] text-white p-2 rounded border border-cyan-500/20 focus:border-cyan-400 focus:outline-none"
@@ -243,12 +248,13 @@ export default function WorkOrdersAndAlerts({
                 </div>
 
                 <div>
-                  <label className="block text-slate-400 uppercase text-[10px] mb-1">Assigned Dive Vessel</label>
+                  <label htmlFor="wo-vessel" className="block text-slate-300 uppercase text-[10px] mb-1">Assigned Dive Vessel</label>
                   <input
+                    id="wo-vessel"
                     type="text"
                     disabled
                     value="Skandi Constructor DSV"
-                    className="w-full bg-[#050c18] text-slate-400 p-2 rounded border border-slate-800"
+                    className="w-full bg-[#050c18] text-slate-300 p-2 rounded border border-slate-800"
                   />
                 </div>
               </div>

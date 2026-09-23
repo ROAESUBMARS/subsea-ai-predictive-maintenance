@@ -314,13 +314,25 @@ export default function AlertingAndEscalationHub({ latestData, onSelectAsset }) 
       {/* Modal: Log Completed Inspection / Intervention */}
       {isLogModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="glass-panel w-full max-w-xl flex flex-col overflow-hidden border border-cyan-500/30 shadow-[0_0_50px_rgba(0,242,254,0.2)]">
+          <div 
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="log-intervention-modal-title"
+            className="glass-panel w-full max-w-xl flex flex-col overflow-hidden border border-cyan-500/30 shadow-[0_0_50px_rgba(0,242,254,0.2)]"
+          >
             <div className="flex items-center justify-between p-4 border-b border-cyan-500/20 bg-[#050c1b]">
               <div className="flex items-center gap-2">
                 <FileCheck className="w-5 h-5 text-emerald-400" />
-                <h3 className="text-sm font-heading font-bold text-white">Log Completed Maintenance Intervention</h3>
+                <h3 id="log-intervention-modal-title" className="text-sm font-heading font-bold text-white">Log Completed Maintenance Intervention</h3>
               </div>
-              <button onClick={() => setIsLogModalOpen(false)} className="text-slate-400 hover:text-white">✕</button>
+              <button 
+                type="button"
+                onClick={() => setIsLogModalOpen(false)} 
+                aria-label="Close maintenance intervention log dialog"
+                className="text-slate-400 hover:text-white"
+              >
+                ✕
+              </button>
             </div>
 
             <form onSubmit={handleSubmitIntervention} className="p-5 space-y-3.5 text-xs font-mono">

@@ -399,16 +399,20 @@ export default function ROVDeploymentHub({ latestData, selectedAssetId, onSelect
           </div>
         </div>
 
-        {/* Fleet Selection Buttons */}
-        <div className="flex items-center gap-1.5 bg-[#050e20] p-1 rounded-lg border border-cyan-500/20 text-xs font-mono">
+        {/* Fleet Selection Buttons (WAI-ARIA Tablist) */}
+        <div role="tablist" aria-label="ROV fleet selection" className="flex items-center gap-1.5 bg-[#050e20] p-1 rounded-lg border border-cyan-500/20 text-xs font-mono">
           {rovFleet.map(rov => (
             <button
               key={rov.id}
+              type="button"
+              role="tab"
+              aria-selected={activeRovId === rov.id}
+              aria-label={`Select ${rov.name}`}
               onClick={() => setActiveRovId(rov.id)}
               className={`px-3 py-1.5 rounded transition-all flex items-center gap-1.5 ${
                 activeRovId === rov.id
                   ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -434,18 +438,24 @@ export default function ROVDeploymentHub({ latestData, selectedAssetId, onSelect
             {/* Quick On-Screen Overlay Action Bar */}
             <div className="absolute top-3 right-3 flex items-center gap-2 bg-[#050e20]/90 backdrop-blur-md p-1.5 rounded-lg border border-cyan-500/20 text-xs font-mono">
               <button
+                type="button"
+                aria-pressed={floodlightsOn}
+                aria-label="Toggle ROV high-intensity floodlights"
                 onClick={() => setFloodlightsOn(!floodlightsOn)}
                 className={`px-2.5 py-1 rounded transition-all flex items-center gap-1 ${
-                  floodlightsOn ? 'bg-amber-500/20 text-amber-300 border border-amber-400/40' : 'text-slate-500'
+                  floodlightsOn ? 'bg-amber-500/20 text-amber-300 border border-amber-400/40' : 'text-slate-300 hover:text-white'
                 }`}
               >
                 <Zap className="w-3 h-3" />
                 Floodlights
               </button>
               <button
+                type="button"
+                aria-pressed={laserScalersOn}
+                aria-label="Toggle ROV green laser scaling grid"
                 onClick={() => setLaserScalersOn(!laserScalersOn)}
                 className={`px-2.5 py-1 rounded transition-all flex items-center gap-1 ${
-                  laserScalersOn ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40' : 'text-slate-500'
+                  laserScalersOn ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40' : 'text-slate-300 hover:text-white'
                 }`}
               >
                 <Crosshair className="w-3 h-3" />
@@ -454,18 +464,22 @@ export default function ROVDeploymentHub({ latestData, selectedAssetId, onSelect
             </div>
           </div>
 
-          {/* Tooling Payload Control Strip */}
+          {/* Tooling Payload Control Strip (WAI-ARIA Radio Group) */}
           <div className="glass-panel p-3.5 flex flex-wrap items-center justify-between gap-3 text-xs font-mono">
-            <div className="flex items-center gap-2">
-              <span className="text-slate-400">ACTIVE SENSOR PAYLOAD:</span>
+            <div role="radiogroup" aria-label="Active sensor payload" className="flex items-center gap-2">
+              <span className="text-slate-300">ACTIVE SENSOR PAYLOAD:</span>
               {['PAUT_SCANNER', 'CP_PROBE', 'LASER_PROFILER', 'OPTICAL_SNIFFER'].map(tool => (
                 <button
                   key={tool}
+                  type="button"
+                  role="radio"
+                  aria-checked={activePayloadTool === tool}
+                  aria-label={`Select ${tool.replace('_', ' ')} payload tool`}
                   onClick={() => setActivePayloadTool(tool)}
                   className={`px-2.5 py-1 rounded transition-all ${
                     activePayloadTool === tool
                       ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-bold'
-                      : 'text-slate-400 hover:text-slate-200 bg-slate-900 border border-slate-800'
+                      : 'text-slate-300 hover:text-white bg-slate-900 border border-slate-800'
                   }`}
                 >
                   {tool.replace('_', ' ')}

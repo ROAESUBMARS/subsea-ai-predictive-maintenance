@@ -199,7 +199,7 @@ export default function TelemetryStreams({ latestData }) {
             <h2 className="font-heading font-bold text-base text-white">
               Multi-Channel Subsea Telemetry Streams
             </h2>
-            <p className="text-xs text-slate-400 font-mono">
+            <p className="text-xs text-slate-300 font-mono">
               High-frequency sensor acquisition with FFT vibration harmonics, acoustic sand monitoring, and hydraulic delta-P.
             </p>
           </div>
@@ -213,9 +213,10 @@ export default function TelemetryStreams({ latestData }) {
 
           <button
             onClick={exportTelemetryCSV}
+            aria-label="Export high-frequency subsea telemetry streams to CSV"
             className="btn-secondary text-xs py-1.5 px-3"
           >
-            <Download className="w-3.5 h-3.5" />
+            <Download className="w-3.5 h-3.5" aria-hidden="true" />
             Export CSV
           </button>
         </div>
@@ -225,14 +226,14 @@ export default function TelemetryStreams({ latestData }) {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         
         <div className="glass-panel p-3.5">
-          <div className="text-[10px] font-mono text-slate-400 uppercase flex items-center justify-between">
+          <div className="text-[10px] font-mono text-slate-300 uppercase flex items-center justify-between">
             <span>BOP Acc Pressure</span>
             <Gauge className="w-3.5 h-3.5 text-cyan-400" />
           </div>
           <div className="text-xl font-heading font-bold text-white mt-1">
-            {curBop?.accumulatorPressure || 3000} <span className="text-xs text-slate-400 font-mono">psi</span>
+            {curBop?.accumulatorPressure || 3000} <span className="text-xs text-slate-300 font-mono">psi</span>
           </div>
-          <div className="text-[10px] text-slate-400 font-mono mt-1">
+          <div className="text-[10px] text-slate-300 font-mono mt-1">
             Min Limit: <span className="text-amber-400">2,400 psi</span>
           </div>
         </div>

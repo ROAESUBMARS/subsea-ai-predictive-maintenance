@@ -44,7 +44,7 @@ export default function ConditionBasedInspectionROI({ latestData, onSelectAsset 
     'PFL-101': false,
     'GEL-201': false
   });
-  const [engineerSigner, setEngineerSigner] = useState('Chief Subsea Integrity Engineer (M. Chen, PE)');
+  const [engineerSigner, setEngineerSigner] = useState('Chief Subsea Integrity Engineer (M. Chen, Simulated)');
   const [justificationNote, setJustificationNote] = useState('Verified against acoustic DAS anomaly threshold and DNV-RP-F116 guidelines.');
 
   if (!latestData) return null;
@@ -224,8 +224,9 @@ export default function ConditionBasedInspectionROI({ latestData, onSelectAsset 
         {/* Engineer Identity & Mandatory Justification Form Strip */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4 p-3 bg-[#0a0e17] rounded-lg border border-slate-800 text-xs font-mono">
           <div>
-            <label className="text-slate-400 block mb-1 text-[10px] font-bold">AUTHORIZING ENGINEER NAME & TITLE</label>
+            <label htmlFor="hitl-authorizer" className="text-slate-300 block mb-1 text-[10px] font-bold">AUTHORIZING ENGINEER NAME & TITLE</label>
             <input
+              id="hitl-authorizer"
               type="text"
               value={engineerSigner}
               onChange={(e) => setEngineerSigner(e.target.value)}
@@ -233,8 +234,9 @@ export default function ConditionBasedInspectionROI({ latestData, onSelectAsset 
             />
           </div>
           <div>
-            <label className="text-slate-400 block mb-1 text-[10px] font-bold">MANDATORY ENGINEERING BASIS / JUSTIFICATION</label>
+            <label htmlFor="hitl-justification" className="text-slate-300 block mb-1 text-[10px] font-bold">MANDATORY ENGINEERING BASIS / JUSTIFICATION</label>
             <input
+              id="hitl-justification"
               type="text"
               value={justificationNote}
               onChange={(e) => setJustificationNote(e.target.value)}
@@ -302,13 +304,14 @@ export default function ConditionBasedInspectionROI({ latestData, onSelectAsset 
                   <button
                     type="button"
                     onClick={() => handleToggleAuthorization(mission)}
+                    aria-label={`${isAuthorized ? 'Revoke authorization for' : 'Authorize ROV dispatch for'} ${mission.title}`}
                     className={`px-3.5 py-1.5 rounded-lg text-xs font-mono font-bold transition-all flex items-center gap-1.5 ${
                       isAuthorized
                         ? 'bg-emerald-500 text-black hover:bg-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.3)]'
                         : 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 hover:bg-cyan-500/30'
                     }`}
                   >
-                    <UserCheck className="w-3.5 h-3.5" />
+                    <UserCheck className="w-3.5 h-3.5" aria-hidden="true" />
                     {isAuthorized ? 'Sign-Off Approved' : 'Authorize ROV Dispatch'}
                   </button>
                 </div>

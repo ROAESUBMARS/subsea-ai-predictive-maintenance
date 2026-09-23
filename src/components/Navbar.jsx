@@ -124,8 +124,8 @@ export default function Navbar({
         <div className="max-w-[1750px] mx-auto flex flex-wrap items-center justify-between gap-2.5">
           
           {/* Brand & Field Identifier */}
-          <div className="flex items-center gap-3">
-            <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-[#111a2e] border border-cyan-400/30 text-cyan-400 shadow-inner">
+          <a href="/" title="Return to SubseaGuard AI Overview" className="flex items-center gap-3 group hover:opacity-90 transition-opacity text-inherit no-underline">
+            <div className="relative flex items-center justify-center w-8 h-8 rounded-lg bg-[#111a2e] border border-cyan-400/30 text-cyan-400 shadow-inner group-hover:border-cyan-400/60 transition-colors">
               <Anchor className="w-4 h-4" />
               <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
             </div>
@@ -139,27 +139,30 @@ export default function Navbar({
                   DELFI / Foundry Spec
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400 font-sans flex items-center gap-1.5">
+              <p className="text-[11px] text-slate-300 font-sans flex items-center gap-1.5">
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                Block-4 Deepwater • Seabed: <strong className="text-slate-300 font-mono tabular-nums">-{SEABED_DEPTH_M} m</strong> • API 17D / DNV-RP-F116
+                Block-4 Deepwater • Seabed: <strong className="text-slate-200 font-mono tabular-nums">-{SEABED_DEPTH_M} m</strong> • API 17D / DNV-RP-F116
               </p>
             </div>
-          </div>
+          </a>
 
-          {/* Center: Role Persona Switcher (Sentence Case) */}
-          <div className="flex items-center gap-1 bg-[#0a0e17] p-1 rounded-lg border border-slate-800 text-xs font-sans">
-            <span className="text-[11px] text-slate-400 px-2 flex items-center gap-1">
+          {/* Center: Role Persona Switcher (WAI-ARIA Radio Group) */}
+          <div role="radiogroup" aria-label="Operator role persona" className="flex items-center gap-1 bg-[#0a0e17] p-1 rounded-lg border border-slate-800 text-xs font-sans">
+            <span className="text-[11px] text-slate-300 px-2 flex items-center gap-1">
               <UserCheck className="w-3 h-3 text-cyan-400" />
               Role:
             </span>
             
             <button
+              type="button"
+              role="radio"
+              aria-checked={userRole === 'technician'}
               onClick={() => onSelectRole('technician')}
               aria-label="Switch to Technician role"
               className={`px-2.5 py-1 rounded transition-all flex items-center gap-1.5 ${
                 userRole === 'technician'
                   ? 'bg-amber-500/20 text-amber-300 border border-amber-400/40 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               <Wrench className="w-3 h-3" />
@@ -167,12 +170,15 @@ export default function Navbar({
             </button>
 
             <button
+              type="button"
+              role="radio"
+              aria-checked={userRole === 'engineer'}
               onClick={() => onSelectRole('engineer')}
               aria-label="Switch to Reliability Engineer role"
               className={`px-2.5 py-1 rounded transition-all flex items-center gap-1.5 ${
                 userRole === 'engineer'
                   ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               <Cpu className="w-3 h-3" />
@@ -180,12 +186,15 @@ export default function Navbar({
             </button>
 
             <button
+              type="button"
+              role="radio"
+              aria-checked={userRole === 'subsea_engineer'}
               onClick={() => onSelectRole('subsea_engineer')}
               aria-label="Switch to Subsea Engineer role"
               className={`px-2.5 py-1 rounded transition-all flex items-center gap-1.5 hidden md:flex ${
                 userRole === 'subsea_engineer'
                   ? 'bg-blue-500/20 text-blue-300 border border-blue-400/40 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               <Anchor className="w-3 h-3" />
@@ -193,12 +202,15 @@ export default function Navbar({
             </button>
 
             <button
+              type="button"
+              role="radio"
+              aria-checked={userRole === 'manager'}
               onClick={() => onSelectRole('manager')}
               aria-label="Switch to Asset Manager role"
               className={`px-2.5 py-1 rounded transition-all flex items-center gap-1.5 ${
                 userRole === 'manager'
                   ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               <BarChart3 className="w-3 h-3" />
@@ -211,10 +223,10 @@ export default function Navbar({
             
             {/* Last updated component (Sentence Case, DM Sans) */}
             <div className="hidden xl:flex flex-col text-right font-sans">
-              <span className={`text-[11px] font-mono tabular-nums ${secondsAgo > 60 ? 'text-amber-400 font-bold' : 'text-slate-400'}`}>
+              <span className={`text-[11px] font-mono tabular-nums ${secondsAgo > 60 ? 'text-amber-400 font-bold' : 'text-slate-300'}`}>
                 Last sync {lastSyncUtc}
               </span>
-              <span className="text-[10px] text-slate-500 font-sans">
+              <span className="text-[10px] text-slate-400 font-sans">
                 Updated <span className="font-mono tabular-nums">{secondsAgo}s</span> ago
               </span>
             </div>
@@ -230,8 +242,8 @@ export default function Navbar({
 
             {/* Anomaly Scenario Selector */}
             <div className="flex items-center gap-1.5 bg-[#0a0e17] px-2.5 py-1 rounded-lg border border-slate-800">
-              <AlertTriangle className={`w-3.5 h-3.5 ${currentScenario !== 'NORMAL' ? 'text-amber-400 animate-pulse' : 'text-slate-400'}`} />
-              <span className="text-[11px] text-slate-400 font-sans hidden sm:inline">Scenario:</span>
+              <AlertTriangle className={`w-3.5 h-3.5 ${currentScenario !== 'NORMAL' ? 'text-amber-400 animate-pulse' : 'text-slate-300'}`} />
+              <span className="text-[11px] text-slate-300 font-sans hidden sm:inline">Scenario:</span>
               <select
                 aria-label="Select simulation anomaly scenario"
                 value={currentScenario}
@@ -253,7 +265,7 @@ export default function Navbar({
               className={`px-2.5 py-1 rounded-lg border text-xs font-mono tabular-nums flex items-center gap-1 transition-all ${
                 isPlaying
                   ? 'bg-cyan-500/20 border-cyan-400/40 text-cyan-300'
-                  : 'bg-slate-800 border-slate-700 text-slate-400'
+                  : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white'
               }`}
             >
               {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
@@ -267,7 +279,7 @@ export default function Navbar({
               className={`p-1.5 rounded-lg border transition-all ${
                 soundEnabled
                   ? 'bg-amber-500/20 border-amber-400/40 text-amber-300'
-                  : 'bg-slate-800 border-slate-700 text-slate-400'
+                  : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white'
               }`}
             >
               {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
@@ -298,28 +310,30 @@ export default function Navbar({
         </div>
       </div>
 
-      {/* Tier 2: Sticky Stage Navigation Ribbon */}
+      {/* Tier 2: Sticky Stage Navigation Ribbon (WAI-ARIA Tablist Pattern) */}
       <div className="px-3.5 lg:px-6 py-1 bg-[#050912]">
         <div className="max-w-[1750px] mx-auto flex items-center justify-between gap-2">
           
-          <nav className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5" role="tablist">
+          <nav className="flex items-center gap-1 overflow-x-auto no-scrollbar py-0.5" role="tablist" aria-label="Operational views">
             {primaryTabs.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               return (
                 <button
                   key={item.id}
+                  id={`tab-${item.id}`}
                   role="tab"
                   aria-selected={isActive}
+                  aria-controls={`panel-${item.id}`}
                   onClick={() => onSelectTab(item.id)}
                   className={`group relative flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-sans whitespace-nowrap transition-all duration-150 ${
                     isActive
                       ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-400/40 font-bold shadow-[0_0_12px_rgba(56,189,248,0.15)]'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent'
+                      : 'text-slate-300 hover:text-white hover:bg-slate-800/40 border border-transparent'
                   }`}
                 >
                   <Icon className={`w-3.5 h-3.5 shrink-0 ${
-                    isActive ? 'text-cyan-400' : 'text-slate-400 group-hover:text-cyan-400'
+                    isActive ? 'text-cyan-400' : 'text-slate-300 group-hover:text-cyan-400'
                   }`} />
                   
                   <span>{item.label}</span>
@@ -330,7 +344,7 @@ export default function Navbar({
                         ? 'bg-cyan-400/20 text-cyan-300 border border-cyan-400/30' 
                         : item.isCriticalAlert
                         ? 'bg-rose-500/25 text-rose-300 border border-rose-500/50 animate-pulse font-bold'
-                        : 'bg-slate-800/80 text-slate-400 border border-slate-700/60'
+                        : 'bg-slate-800/80 text-slate-300 border border-slate-700/60'
                     }`}>
                       {item.badge}
                     </span>
@@ -339,16 +353,18 @@ export default function Navbar({
               );
             })}
 
-            {/* Specialized Sub-Modules Dropdown */}
+            {/* Specialized Sub-Modules Dropdown (WAI-ARIA Listbox Pattern) */}
             <div className="relative">
               <button
+                id="diagnostics-menu-trigger"
                 onClick={() => setIsMoreMenuOpen(!isMoreMenuOpen)}
+                aria-haspopup="listbox"
                 aria-expanded={isMoreMenuOpen}
                 aria-label="Toggle specialized diagnostic modules dropdown"
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-sans whitespace-nowrap transition-all ${
                   activeSpecialized
                     ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-400/40 font-bold'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/40 border border-transparent'
                 }`}
               >
                 <span>{activeSpecialized ? activeSpecialized.label : 'Diagnostics'}</span>
@@ -356,18 +372,24 @@ export default function Navbar({
               </button>
 
               {isMoreMenuOpen && (
-                <div className="absolute top-full left-0 mt-1 w-56 bg-[#0a0e17] border border-slate-800 rounded-lg shadow-2xl py-1 z-50">
+                <div 
+                  role="listbox" 
+                  aria-labelledby="diagnostics-menu-trigger" 
+                  className="absolute top-full left-0 mt-1 w-56 bg-[#0a0e17] border border-slate-800 rounded-lg shadow-2xl py-1 z-50"
+                >
                   {specializedModules.map(mod => {
                     const ModIcon = mod.icon;
                     return (
                       <button
                         key={mod.id}
+                        role="option"
+                        aria-selected={activeTab === mod.id}
                         onClick={() => {
                           onSelectTab(mod.id);
                           setIsMoreMenuOpen(false);
                         }}
                         className={`w-full px-3 py-2 text-left text-xs font-sans flex items-center gap-2 hover:bg-slate-800/60 transition-colors ${
-                          activeTab === mod.id ? 'text-cyan-300 font-bold bg-cyan-500/10' : 'text-slate-300'
+                          activeTab === mod.id ? 'text-cyan-300 font-bold bg-cyan-500/10' : 'text-slate-200'
                         }`}
                       >
                         <ModIcon className="w-3.5 h-3.5 text-cyan-400" />
@@ -382,7 +404,7 @@ export default function Navbar({
           </nav>
 
           {/* Quick Context Stat */}
-          <div className="hidden md:flex items-center gap-3 text-[11px] font-sans text-slate-400 shrink-0">
+          <div className="hidden md:flex items-center gap-3 text-[11px] font-sans text-slate-300 shrink-0">
             <span className="flex items-center gap-1">
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
               DAS fiber bus online (20 Hz)

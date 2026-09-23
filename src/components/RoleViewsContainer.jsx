@@ -82,9 +82,10 @@ export default function RoleViewsContainer({
 
           <button
             onClick={() => onNavigateTab('rov-deployment')}
+            aria-label="Launch ROV Camera HUD navigation"
             className="btn-primary bg-amber-500 hover:bg-amber-400 text-black flex items-center gap-1.5 text-xs py-1 px-3"
           >
-            <Camera className="w-3.5 h-3.5" />
+            <Camera className="w-3.5 h-3.5" aria-hidden="true" />
             Launch ROV Camera HUD
           </button>
         </div>
@@ -96,16 +97,20 @@ export default function RoleViewsContainer({
             const isWarn = a.status === 'WARNING';
             const isSelected = a.id === currentAssetKey;
             return (
-              <div
+              <button
+                type="button"
                 key={a.id}
+                role="button"
+                aria-pressed={isSelected}
+                aria-label={`Select asset ${a.id}, status ${a.status}, remaining useful life ${a.rulDays} days`}
                 onClick={() => onSelectAsset(a.id)}
-                className={`p-3 rounded border cursor-pointer transition-all flex flex-col justify-between ${
+                className={`text-left p-3 rounded border cursor-pointer transition-all flex flex-col justify-between ${
                   isSelected
                     ? 'border-cyan-400 bg-cyan-500/15 shadow-[0_0_12px_rgba(45,212,224,0.3)]'
                     : 'border-slate-800 bg-[#0d1526] hover:bg-slate-800/60'
                 }`}
               >
-                <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center justify-between mb-1.5 w-full">
                   <span className="font-bold text-xs text-white font-mono">{a.id}</span>
                   <span className={`w-2.5 h-2.5 rounded-full ${
                     isCrit ? 'bg-rose-500 animate-ping' : (isWarn ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400')
@@ -114,16 +119,16 @@ export default function RoleViewsContainer({
 
                 <div className="my-1">
                   <div className="text-[11px] text-slate-300 font-bold">{a.type.split(' ')[0]}</div>
-                  <div className="text-[9px] text-slate-400 font-mono uppercase">
+                  <div className="text-[9px] text-slate-300 font-mono uppercase">
                     {isCrit ? 'ACTION REQUIRED' : (isWarn ? 'ATTENTION' : 'HEALTHY')}
                   </div>
                 </div>
 
-                <div className="text-[10px] font-mono text-cyan-300 pt-1.5 border-t border-slate-800 flex items-center justify-between">
+                <div className="text-[10px] font-mono text-cyan-300 pt-1.5 border-t border-slate-800 flex items-center justify-between w-full">
                   <span>RUL:</span>
                   <span className="font-extrabold">{a.rulDays}d</span>
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
@@ -160,6 +165,7 @@ export default function RoleViewsContainer({
           <div className="mt-3 pt-2 border-t border-slate-800 flex items-center justify-end gap-2">
             <button
               onClick={() => onNavigateTab('alerting-escalation')}
+              aria-label="Sign off and log completed work order in escalation hub"
               className="btn-primary bg-emerald-500 hover:bg-emerald-400 text-black text-xs py-1 px-4"
             >
               Sign Off & Log Completed Work Order
@@ -201,16 +207,18 @@ export default function RoleViewsContainer({
           <div className="flex items-center gap-2">
             <button
               onClick={() => onNavigateTab('digital-twin')}
+              aria-label="Navigate to 3D Digital Twin view"
               className="btn-secondary text-xs py-1 px-3 flex items-center gap-1.5"
             >
-              <Layers className="w-3.5 h-3.5 text-cyan-400" />
+              <Layers className="w-3.5 h-3.5 text-cyan-400" aria-hidden="true" />
               3D Digital Twin
             </button>
             <button
               onClick={() => onNavigateTab('rov-deployment')}
+              aria-label="Navigate to ROV Operations hub"
               className="btn-primary text-xs py-1 px-3 flex items-center gap-1.5"
             >
-              <Camera className="w-3.5 h-3.5" />
+              <Camera className="w-3.5 h-3.5" aria-hidden="true" />
               ROV Operations
             </button>
           </div>
@@ -271,9 +279,10 @@ export default function RoleViewsContainer({
             <button
               onClick={handleRunStrokeTest}
               disabled={strokeTestStatus === 'TESTING'}
+              aria-label="Execute emergency shutdown wing valve stroke test"
               className="btn-secondary text-xs py-1 px-3 flex items-center gap-1.5"
             >
-              <Zap className="w-3.5 h-3.5 text-amber-400" />
+              <Zap className="w-3.5 h-3.5 text-amber-400" aria-hidden="true" />
               {strokeTestStatus === 'TESTING' ? 'Executing ESD Stroke Test...' :
                strokeTestStatus === 'COMPLETED_PASSED' ? 'Stroke Test: PASSED (100%)' :
                'Test Subsea Wing Valve Stroke'}
@@ -282,7 +291,7 @@ export default function RoleViewsContainer({
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
-              <thead className="border-b border-slate-800 text-slate-400 text-[10px] uppercase">
+              <thead className="border-b border-slate-800 text-slate-300 text-[10px] uppercase">
                 <tr>
                   <th className="pb-2">HARDWARE TAG</th>
                   <th className="pb-2">LOCATION</th>
@@ -302,7 +311,7 @@ export default function RoleViewsContainer({
                   <tr key={idx} className="hover:bg-slate-800/30">
                     <td className="py-2.5 font-bold text-cyan-300">{item.tag}</td>
                     <td className="py-2.5 text-slate-300">{item.loc}</td>
-                    <td className="py-2.5 text-slate-400">{item.func}</td>
+                    <td className="py-2.5 text-slate-300">{item.func}</td>
                     <td className="py-2.5 font-bold text-emerald-400">{item.state}</td>
                     <td className="py-2.5 text-slate-300">{item.check}</td>
                     <td className="py-2.5 text-right">
@@ -350,9 +359,10 @@ export default function RoleViewsContainer({
 
           <button
             onClick={() => onNavigateTab('inspection-cbi')}
+            aria-label="Navigate to Condition-Based Inspection OPEX savings"
             className="btn-primary bg-emerald-500 hover:bg-emerald-400 text-black flex items-center gap-1.5 text-xs py-1 px-3"
           >
-            <DollarSign className="w-3.5 h-3.5" />
+            <DollarSign className="w-3.5 h-3.5" aria-hidden="true" />
             View CBI OPEX Savings
           </button>
         </div>

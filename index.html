@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,59 +7,585 @@
     
     <!-- Primary Page Title & SEO Meta -->
     <title>SubseaGuard AI | Deepwater Predictive Maintenance & Digital Twin Operations</title>
-    <meta name="description" content="SubseaGuard AI is an industrial digital twin and predictive maintenance platform for deepwater subsea production systems. Features real-time multi-sensor telemetry, RUL prognostics, early acoustic leak detection, and condition-based inspection ROI." />
-    <meta name="keywords" content="subsea, predictive maintenance, digital twin, oil and gas, flowline integrity, steel catenary riser, acoustic leak detection, DNV-RP-F116, API 17D, offshore robotics" />
+    <meta name="description" content="SubseaGuard AI is an industrial digital twin and predictive maintenance platform for deepwater subsea production systems. Features physics-informed RUL prognostics, acoustic leak detection, and HITL-gated ROV dispatch." />
+    <meta name="keywords" content="subsea, predictive maintenance, digital twin, oil and gas, flowline integrity, steel catenary riser, acoustic leak detection, DNV-RP-F116, API 17D, ISO 14224, offshore robotics, subseaguard, Oluwatobiloba Smithson" />
     <meta name="author" content="Oluwatobiloba Smithson" />
+    <link rel="canonical" href="https://subseaguard.dev/" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://subsea-ai-predictive-maintenance.vercel.app/" />
+    <meta property="og:url" content="https://subseaguard.dev/" />
     <meta property="og:title" content="SubseaGuard AI | Deepwater Predictive Maintenance & Digital Twin" />
-    <meta property="og:description" content="Industrial digital twin and AI-driven predictive maintenance platform for subsea flowlines, risers, and manifolds. Real-time telemetry, RUL prognostics, and automated ROV dispatch." />
-    <meta property="og:image" content="/favicon.svg" />
+    <meta property="og:description" content="Deepwater digital twin with physics-informed predictive maintenance: RUL forecasting with Bayesian UQ, acoustic leak detection, and HITL-gated ROV dispatch." />
+    <meta property="og:image" content="https://subseaguard.dev/og.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="SubseaGuard AI | Deepwater Predictive Maintenance Platform" />
-    <meta name="twitter:description" content="AI-driven subsea digital twin with physics-informed failure prognostics and automated ROV deployment authorization." />
-    <meta name="twitter:image" content="/favicon.svg" />
+    <meta name="twitter:description" content="Deepwater digital twin with physics-informed predictive maintenance and automated ROV deployment authorization." />
+    <meta name="twitter:image" content="https://subseaguard.dev/og.png" />
 
-    <!-- Google Fonts: Sora (Display/KPIs), DM Sans (Body/Labels), JetBrains Mono (Tabular Numerals) -->
+    <!-- Google Fonts: Sora (Display), DM Sans (Body), JetBrains Mono (Numerals) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=JetBrains+Mono:wght@400;500;600;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CDN for responsive utilities -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              heading: ['Sora', 'sans-serif'],
-              sans: ['DM Sans', 'sans-serif'],
-              mono: ['JetBrains Mono', 'monospace'],
-            },
-            colors: {
-              surface: {
-                base: '#0a0e17',
-                card: '#131b2e',
-                raised: '#1a243d',
-              },
-              status: {
-                critical: '#ef4444',
-                warning: '#f59e0b',
-                nominal: '#10b981',
-                offline: '#64748b',
-              }
-            }
-          }
-        }
+    <!-- CSS Entry Point (Tailwind + Design Tokens) -->
+    <link rel="stylesheet" href="/src/index.css" />
+
+    <!-- Schema.org JSON-LD Structured Data for Crawlers -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "SubseaGuard AI",
+      "url": "https://subseaguard.dev/",
+      "applicationCategory": "IndustrialEngineeringApplication",
+      "operatingSystem": "Web Browser",
+      "description": "Deepwater digital twin with physics-informed predictive maintenance for subsea production systems (API 17D, DNV-RP-F116, ISO 14224).",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "featureList": [
+        "Physics-Informed RUL Forecasting with Bayesian Uncertainty Quantification",
+        "Vortex-Induced Vibration (VIV) & Paris-Erdogan Fatigue Modeling",
+        "Negative Pressure Wave Acoustic Leak Sniffer (<30s localization)",
+        "Human-In-The-Loop (HITL) Gated Autonomous ROV Dispatch",
+        "Condition-Based Inspection (CBI) ROI Analysis (-68% OPEX)"
+      ],
+      "author": {
+        "@type": "Person",
+        "name": "Oluwatobiloba Smithson"
       }
+    }
     </script>
   </head>
-  <body class="bg-[#080d1a] text-slate-100 font-sans antialiased selection:bg-cyan-500 selection:text-white">
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+  <body class="bg-[#080d1a] text-slate-100 font-sans antialiased selection:bg-cyan-500 selection:text-black min-h-screen flex flex-col">
+
+    <!-- Top Sticky Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-[#070b14]/95 backdrop-blur-md border-b border-slate-800/80">
+      <div class="max-w-[1400px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        
+        <!-- Brand Logo -->
+        <a href="/" class="flex items-center gap-3 group text-inherit no-underline">
+          <div class="relative flex items-center justify-center w-9 h-9 rounded-lg bg-[#111a2e] border border-cyan-400/30 text-cyan-400 shadow-inner group-hover:border-cyan-400/60 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg>
+            <span class="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-heading font-extrabold text-base text-white tracking-wide">
+                Subsea<span class="text-cyan-400">Guard</span> AI
+              </span>
+              <span class="badge badge-cyan text-[9px] py-0.5 px-1.5 font-mono">
+                DNV-RP-F116 // API 17D
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-400 font-sans">
+              Deepwater Predictive Maintenance & Digital Twin
+            </p>
+          </div>
+        </a>
+
+        <!-- Navigation Links & CTAs -->
+        <nav class="flex items-center gap-4 sm:gap-6 text-xs font-sans">
+          <a href="#overview" class="text-slate-400 hover:text-cyan-300 transition-colors hidden md:inline-block">Overview</a>
+          <a href="#three-pillars" class="text-slate-400 hover:text-cyan-300 transition-colors hidden md:inline-block">Architecture</a>
+          <a href="#methodology" class="text-slate-400 hover:text-cyan-300 transition-colors hidden sm:inline-block">Methodology</a>
+          <a href="#tech-stack" class="text-slate-400 hover:text-cyan-300 transition-colors hidden lg:inline-block">Tech Stack</a>
+          
+          <a
+            href="https://github.com/ROAESUBMARS/subsea-ai-predictive-maintenance"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-slate-400 hover:text-white transition-colors hidden sm:flex items-center gap-1.5"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+            <span>Source</span>
+          </a>
+
+          <a
+            href="/app/"
+            class="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs font-sans flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(56,189,248,0.25)] hover:shadow-[0_0_20px_rgba(56,189,248,0.4)]"
+          >
+            <span class="w-2 h-2 rounded-full bg-slate-950 animate-pulse"></span>
+            <span>Launch Live Demo</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </nav>
+
+      </div>
+    </header>
+
+    <main class="flex-1">
+
+      <!-- Hero Section -->
+      <section id="overview" class="relative pt-16 pb-16 md:pt-24 md:pb-24 overflow-hidden">
+        
+        <!-- Deep Sea Ambient Glow -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none"></div>
+
+        <div class="max-w-[1280px] mx-auto px-4 sm:px-6 relative z-10 text-center">
+          
+          <!-- Category Badge -->
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#111a2e] border border-cyan-400/30 text-cyan-300 text-xs font-mono tracking-wider font-semibold mb-6">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span>DEEPWATER DIGITAL TWIN // BLOCK-4 GULF OF MEXICO (-1,850M)</span>
+          </div>
+
+          <!-- Hero Headline -->
+          <h1 class="text-4xl sm:text-6xl font-heading font-extrabold text-white tracking-tight max-w-4xl mx-auto leading-[1.12]">
+            Subsea<span class="text-cyan-400">Guard</span> AI
+          </h1>
+
+          <!-- Hero Subtitle -->
+          <p class="mt-4 text-xl sm:text-2xl text-cyan-100 font-heading font-semibold max-w-3xl mx-auto">
+            Deepwater digital twin with physics-informed predictive maintenance
+          </p>
+
+          <p class="mt-4 text-sm sm:text-base text-slate-300 max-w-2xl mx-auto font-sans leading-relaxed">
+            Continuous multi-sensor telemetry, Bayesian RUL prognostics, distributed acoustic leak detection, and human-in-the-loop autonomous ROV intervention planning.
+          </p>
+
+          <!-- Action Buttons: Launch Live Demo / Read the Methodology -->
+          <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <a
+              href="/app/"
+              class="px-6 py-3.5 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-sm font-sans flex items-center gap-2.5 transition-all shadow-[0_0_25px_rgba(56,189,248,0.35)] hover:shadow-[0_0_35px_rgba(56,189,248,0.5)] transform hover:-translate-y-0.5"
+            >
+              <span>Launch Live Demo</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+
+            <a
+              href="#methodology"
+              class="px-5 py-3.5 rounded-lg bg-[#111a2e] hover:bg-[#16223b] text-slate-200 border border-slate-700 hover:border-cyan-400/40 font-semibold text-sm font-sans transition-all flex items-center gap-2"
+            >
+              <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              <span>Read the Methodology</span>
+            </a>
+          </div>
+
+          <!-- Prominent Simulation Disclosure Banner -->
+          <div class="mt-10 max-w-3xl mx-auto">
+            <div class="glass-panel p-4 sm:p-5 bg-amber-500/10 border-amber-400/30 text-left rounded-xl relative overflow-hidden">
+              <div class="flex items-start gap-3.5">
+                <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-400/40 flex items-center justify-center shrink-0 text-amber-300">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+                <div class="space-y-1.5 flex-1">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-mono font-bold text-amber-300 uppercase tracking-wider">Simulation Disclosure</span>
+                    <span class="text-[10px] px-2 py-0.5 rounded bg-amber-400/20 text-amber-200 border border-amber-400/30 font-mono font-semibold">SYNTHETIC PHYSICS TELEMETRY</span>
+                  </div>
+                  <p class="text-xs text-amber-200/90 font-sans leading-relaxed">
+                    <strong>All telemetry is synthetic</strong>, generated by continuous physics models: <strong>Vortex-Induced Vibration (VIV)</strong>, <strong>PVT hydrate thermodynamic equilibrium</strong>, and <strong>Paris-Erdogan fatigue crack growth</strong>. No real field production data is used. Live field instrumentation remains untouched.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Three Core Cards Section (What it monitors / How it predicts / What it triggers) -->
+      <section id="three-pillars" class="py-16 border-t border-slate-800/80 bg-[#070b14]/50">
+        <div class="max-w-[1280px] mx-auto px-4 sm:px-6">
+          
+          <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="badge badge-cyan text-xs font-mono mb-2">SYSTEM FOUNDATION</span>
+            <h2 class="text-3xl font-heading font-bold text-white tracking-tight">
+              Predictive Subsea Reliability Framework
+            </h2>
+            <p class="mt-2 text-slate-400 text-sm font-sans">
+              Engineered for subsea integrity managers and technical recruiters: an overview of the monitoring telemetry, mathematical prognostics, and robotics dispatch pipeline.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <!-- Card 1: What it Monitors -->
+            <div class="glass-panel p-6 sm:p-7 bg-[#0c1426] border-slate-800 hover:border-cyan-500/40 transition-all flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <span class="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider">01 // TELEMETRY & ASSETS</span>
+                  <div class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><activity><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></activity></svg>
+                  </div>
+                </div>
+
+                <h3 class="text-xl font-heading font-bold text-white mb-2">What It Monitors</h3>
+                <p class="text-xs text-slate-300 font-sans leading-relaxed mb-4">
+                  Continuous multi-transducer health telemetry across mission-critical deepwater infrastructure:
+                </p>
+
+                <ul class="space-y-2 text-xs text-slate-400 font-sans">
+                  <li class="flex items-start gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-1.5 shrink-0"></span>
+                    <span><strong>Subsea Flowlines (PFL-101)</strong>: 12.4 km carbon steel line with 3mm Inconel 625 cladding, pressure (0-300 bar), and fluid temperature.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-1.5 shrink-0"></span>
+                    <span><strong>Steel Catenary Risers (SCR-01)</strong>: Dynamic top-tension monitoring, touchdown zone (TDZ) bending stress, and bend stiffener fatigue.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 mt-1.5 shrink-0"></span>
+                    <span><strong>Subsea Manifolds & Trees</strong>: Choke valve cavitation erosion, multiphase pump bearing vibration kurtosis, and acoustic leak waves.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono text-slate-500">
+                <span>Instrumentation</span>
+                <span class="text-cyan-400 font-bold">20 Hz DAS Fiber & UT</span>
+              </div>
+            </div>
+
+            <!-- Card 2: How it Predicts -->
+            <div class="glass-panel p-6 sm:p-7 bg-[#0c1426] border-slate-800 hover:border-purple-500/40 transition-all flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <span class="text-xs font-mono font-bold text-purple-400 uppercase tracking-wider">02 // MATHEMATICAL PROGNOSTICS</span>
+                  <div class="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M16 12l-4-4-4 4M12 16V9"/></svg>
+                  </div>
+                </div>
+
+                <h3 class="text-xl font-heading font-bold text-white mb-2">How It Predicts</h3>
+                <p class="text-xs text-slate-300 font-sans leading-relaxed mb-4">
+                  Remaining Useful Life (RUL) with Bayesian Uncertainty Quantification (UQ):
+                </p>
+
+                <ul class="space-y-2 text-xs text-slate-400 font-sans">
+                  <li class="flex items-start gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-400 mt-1.5 shrink-0"></span>
+                    <span><strong>Weibull Hazard Rate Modeling</strong>: Evaluates cumulative degradation to forecast remaining days to functional failure boundaries.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-400 mt-1.5 shrink-0"></span>
+                    <span><strong>Bayesian Uncertainty Bounds</strong>: Generates P10 (conservative), P50 (expected), and P90 (optimistic) confidence intervals.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-purple-400 mt-1.5 shrink-0"></span>
+                    <span><strong>Physics Reference Bands</strong>: Models PVT hydrate equilibrium margin (&Delta;T subcooling) and Paris-Erdogan crack propagation.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono text-slate-500">
+                <span>Confidence Intervals</span>
+                <span class="text-purple-400 font-bold">P10 / P50 / P90 UQ</span>
+              </div>
+            </div>
+
+            <!-- Card 3: What it Triggers -->
+            <div class="glass-panel p-6 sm:p-7 bg-[#0c1426] border-slate-800 hover:border-emerald-500/40 transition-all flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <span class="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">03 // AUTONOMOUS INTERVENTION</span>
+                  <div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  </div>
+                </div>
+
+                <h3 class="text-xl font-heading font-bold text-white mb-2">What It Triggers</h3>
+                <p class="text-xs text-slate-300 font-sans leading-relaxed mb-4">
+                  Human-In-The-Loop (HITL) Gated Autonomous ROV Dispatch:
+                </p>
+
+                <ul class="space-y-2 text-xs text-slate-400 font-sans">
+                  <li class="flex items-start gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0"></span>
+                    <span><strong>Automated ISO 14224 Work Orders</strong>: Instant fault dossier generation with failure classification and recommended tools.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0"></span>
+                    <span><strong>Robotics Dive Path Planning</strong>: Computes 3D subsea waypoint coordinates, depth profile (-1,850m), and tether management constraints.</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0"></span>
+                    <span><strong>Mandatory Engineering Authorization</strong>: HITL gating ensures no physical ROV deployment without signed engineer approval.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono text-slate-500">
+                <span>Robotics Dispatch</span>
+                <span class="text-emerald-400 font-bold">HITL Gated // ISO 14224</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Dashboard Preview & Interactive Callout -->
+      <section class="py-16 bg-[#080d1a]">
+        <div class="max-w-[1280px] mx-auto px-4 sm:px-6">
+          <div class="glass-panel p-6 sm:p-10 bg-[#0d1527] border-slate-800 rounded-2xl">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              
+              <div class="space-y-4">
+                <span class="badge badge-cyan text-xs font-mono">LIVE DEMONSTRATION</span>
+                <h2 class="text-2xl sm:text-3xl font-heading font-bold text-white leading-tight">
+                  Experience the 5-Zone Control Room in Real Time
+                </h2>
+                <p class="text-slate-300 text-sm font-sans leading-relaxed">
+                  The interactive console features real-time simulated telemetry ticks (1.5s interval), synthetic anomaly injection scenarios (Hydrate Plug, Bearing Wear, Choke Erosion, Acoustic Leak), and interactive 3D digital twin visualization.
+                </p>
+                <div class="flex flex-wrap gap-2 pt-2">
+                  <span class="px-2.5 py-1 rounded bg-[#111a2e] text-slate-300 border border-slate-700 text-xs font-mono">5 Operational Zones</span>
+                  <span class="px-2.5 py-1 rounded bg-[#111a2e] text-slate-300 border border-slate-700 text-xs font-mono">Role Personas (Technician / Engineer / Manager)</span>
+                  <span class="px-2.5 py-1 rounded bg-[#111a2e] text-slate-300 border border-slate-700 text-xs font-mono">Audio Alarm Synthesizer</span>
+                </div>
+                <div class="pt-4">
+                  <a
+                    href="/app/"
+                    class="inline-flex items-center gap-2 px-5 py-3 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-bold text-xs font-sans transition-all shadow-[0_0_20px_rgba(56,189,248,0.3)]"
+                  >
+                    <span>Launch Operational Console</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Preview Frame -->
+              <a href="/app/" class="block relative rounded-xl overflow-hidden border border-cyan-500/30 group shadow-2xl">
+                <img
+                  src="/og.png"
+                  alt="SubseaGuard AI Dashboard Interface"
+                  width="1200"
+                  height="630"
+                  class="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-[#080d1a] via-transparent to-transparent opacity-50"></div>
+                <div class="absolute bottom-3 right-3 px-3 py-1 rounded bg-[#0b1222]/90 border border-cyan-400/40 text-cyan-300 text-xs font-mono font-bold">
+                  Open Console &rarr;
+                </div>
+              </a>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Methodology Deep-Dive Section -->
+      <section id="methodology" class="py-16 border-t border-slate-800/80 bg-[#070b14]/60">
+        <div class="max-w-[1280px] mx-auto px-4 sm:px-6">
+          
+          <div class="max-w-3xl mx-auto text-center mb-12">
+            <span class="badge badge-cyan text-xs font-mono mb-2">ENGINEERING PRINCIPLES</span>
+            <h2 class="text-3xl font-heading font-bold text-white tracking-tight">
+              Predictive Maintenance Methodology
+            </h2>
+            <p class="mt-2 text-slate-400 text-sm font-sans">
+              Combining first-principles physics models with probabilistic statistical degradation analysis.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <div class="glass-panel p-6 bg-[#0c1426] border-slate-800">
+              <h3 class="text-lg font-heading font-bold text-white mb-2 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                Negative Pressure Wave Acoustic Leak Sniffer
+              </h3>
+              <p class="text-xs text-slate-300 font-sans leading-relaxed mb-3">
+                When a breach occurs in a high-pressure subsea flowline, an acoustic rarefaction wave propagates in both directions at fluid sonic velocity ($a \approx 1,020\text{ m/s}$).
+              </p>
+              <div class="p-3 rounded bg-[#070b14] border border-slate-800 font-mono text-xs text-cyan-300 mb-3">
+                x = (L + a &times; &Delta;t) / 2
+              </div>
+              <p class="text-xs text-slate-400 font-sans leading-relaxed">
+                By cross-correlating PTP time-stamped acoustic signatures (&plusmn;8ns jitter) from dual ends (Manifold SM-01 to PLET-01), the sniffer localizes fractures along the 12.4 km line within &plusmn;12 meters.
+              </p>
+            </div>
+
+            <div class="glass-panel p-6 bg-[#0c1426] border-slate-800">
+              <h3 class="text-lg font-heading font-bold text-white mb-2 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                Thermodynamic Hydrate Risk & Subcooling Margin
+              </h3>
+              <p class="text-xs text-slate-300 font-sans leading-relaxed mb-3">
+                Gas hydrates form at low seabed temperatures (4&deg;C) and high pressures (190+ bar). SubseaGuard models the Sloan equilibrium boundary:
+              </p>
+              <div class="p-3 rounded bg-[#070b14] border border-slate-800 font-mono text-xs text-amber-300 mb-3">
+                &Delta;T_subcooling = T_fluid - T_hydrate_dissociation(P)
+              </div>
+              <p class="text-xs text-slate-400 font-sans leading-relaxed">
+                When &Delta;T drops below +15&deg;C, the platform triggers predictive monoethylene glycol (MEG) dosing alerts before blockage crystallization chokes production.
+              </p>
+            </div>
+
+            <div class="glass-panel p-6 bg-[#0c1426] border-slate-800">
+              <h3 class="text-lg font-heading font-bold text-white mb-2 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                Paris-Erdogan Crack Growth & Fatigue Accumulation
+              </h3>
+              <p class="text-xs text-slate-300 font-sans leading-relaxed mb-3">
+                Dynamic cyclic stress in deepwater steel catenary risers caused by ocean currents and vortex shedding follows the Paris-Erdogan law:
+              </p>
+              <div class="p-3 rounded bg-[#070b14] border border-slate-800 font-mono text-xs text-purple-300 mb-3">
+                da/dN = C &times; (&Delta;K)^m
+              </div>
+              <p class="text-xs text-slate-400 font-sans leading-relaxed">
+                Rainflow counting evaluates bending moments across the touchdown zone (TDZ) to project Remaining Useful Life (RUL) with DNV-RP-F116 safety factors.
+              </p>
+            </div>
+
+            <div class="glass-panel p-6 bg-[#0c1426] border-slate-800">
+              <h3 class="text-lg font-heading font-bold text-white mb-2 flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                Condition-Based Inspection (CBI) vs Calendar Charters
+              </h3>
+              <p class="text-xs text-slate-300 font-sans leading-relaxed mb-3">
+                Traditional offshore campaigns dispatch inspection vessels on rigid 6-month calendar cycles ($180,000/day charter rate), regardless of actual equipment wear.
+              </p>
+              <div class="p-3 rounded bg-[#070b14] border border-slate-800 font-mono text-xs text-emerald-300 mb-3">
+                OPEX_Savings = (Calendar_Days - CBI_Targeted_Days) &times; Vessel_Dayrate
+              </div>
+              <p class="text-xs text-slate-400 font-sans leading-relaxed">
+                Targeting inspections solely when Bayesian health indexes degrade avoids 28 vessel charter days annually—saving $3.84M while enhancing subsea reliability.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Tech Stack & Author Profile Section (Tailored for Recruiters & Hiring Managers) -->
+      <section id="tech-stack" class="py-16 border-t border-slate-800/80 bg-[#080d1a]">
+        <div class="max-w-[1280px] mx-auto px-4 sm:px-6">
+          
+          <div class="glass-panel p-8 sm:p-10 bg-[#0d1527] border-slate-800 rounded-2xl">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              
+              <!-- Author Profile -->
+              <div class="space-y-4">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-300 text-xs font-mono font-semibold">
+                  <span>ENGINEER & ARCHITECT</span>
+                </div>
+                <h3 class="text-2xl font-heading font-bold text-white">
+                  Oluwatobiloba Smithson
+                </h3>
+                <p class="text-xs text-slate-300 font-sans leading-relaxed">
+                  Subsea systems & predictive maintenance engineering specialist combining domain knowledge in offshore oil & gas production (API 17D, DNV-RP-F116) with physics-informed AI modeling and modern web architectures.
+                </p>
+
+                <div class="pt-2 flex flex-col gap-2 text-xs font-sans">
+                  <a
+                    href="https://github.com/ROAESUBMARS/subsea-ai-predictive-maintenance"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-cyan-400 hover:text-cyan-300 flex items-center gap-1.5 transition-colors"
+                  >
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+                    <span>github.com/ROAESUBMARS/subsea-ai-predictive-maintenance</span>
+                  </a>
+
+                  <a
+                    href="/SubseaGuard_AI_User_Guide.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-slate-300 hover:text-white flex items-center gap-1.5 transition-colors"
+                  >
+                    <svg class="w-4 h-4 text-rose-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span>Download Engineering User Guide & Documentation (PDF)</span>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Tech Stack Grid -->
+              <div class="lg:col-span-2 space-y-4">
+                <span class="badge badge-cyan text-xs font-mono">TECHNICAL IMPLEMENTATION</span>
+                <h3 class="text-xl font-heading font-bold text-white">
+                  Modern Production Technology Stack
+                </h3>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+                  
+                  <div class="p-3 rounded-lg bg-[#070b14] border border-slate-800">
+                    <span class="text-[11px] font-mono text-slate-500 block">FRONTEND RUNTIME</span>
+                    <span class="text-sm font-heading font-bold text-white">React 18</span>
+                    <span class="text-[11px] text-slate-400 block mt-0.5">Suspense, Hooks, Code-Splitting</span>
+                  </div>
+
+                  <div class="p-3 rounded-lg bg-[#070b14] border border-slate-800">
+                    <span class="text-[11px] font-mono text-slate-500 block">BUILD TOOLCHAIN</span>
+                    <span class="text-sm font-heading font-bold text-white">Vite 5 (Multi-Page)</span>
+                    <span class="text-[11px] text-slate-400 block mt-0.5">Static Landing + SPA Console</span>
+                  </div>
+
+                  <div class="p-3 rounded-lg bg-[#070b14] border border-slate-800">
+                    <span class="text-[11px] font-mono text-slate-500 block">DESIGN SYSTEM</span>
+                    <span class="text-sm font-heading font-bold text-white">Tailwind CSS v3</span>
+                    <span class="text-[11px] text-slate-400 block mt-0.5">AOT Build &bull; Zero CDN Overhead</span>
+                  </div>
+
+                  <div class="p-3 rounded-lg bg-[#070b14] border border-slate-800">
+                    <span class="text-[11px] font-mono text-slate-500 block">DATA VISUALIZATION</span>
+                    <span class="text-sm font-heading font-bold text-white">Chart.js 4</span>
+                    <span class="text-[11px] text-slate-400 block mt-0.5">20 Hz Real-Time Streaming</span>
+                  </div>
+
+                  <div class="p-3 rounded-lg bg-[#070b14] border border-slate-800">
+                    <span class="text-[11px] font-mono text-slate-500 block">EDGE PROTOCOLS</span>
+                    <span class="text-sm font-heading font-bold text-white">PTP IEEE 1588</span>
+                    <span class="text-[11px] text-slate-400 block mt-0.5">&plusmn;8ns Time-Stamp Correlation</span>
+                  </div>
+
+                  <div class="p-3 rounded-lg bg-[#070b14] border border-slate-800">
+                    <span class="text-[11px] font-mono text-slate-500 block">SECURITY POSTURE</span>
+                    <span class="text-sm font-heading font-bold text-white">Strict CSP & HSTS</span>
+                    <span class="text-[11px] text-slate-400 block mt-0.5">Production Vercel Edge Headers</span>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#050912] border-t border-slate-800/80 py-8 px-4 sm:px-6 text-xs font-sans text-slate-400">
+      <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        
+        <div class="flex items-center gap-3">
+          <div class="w-7 h-7 rounded bg-[#111a2e] border border-cyan-400/30 text-cyan-400 flex items-center justify-center">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg>
+          </div>
+          <div>
+            <span class="font-heading font-bold text-slate-200">SubseaGuard AI</span>
+            <span class="text-slate-500 ml-2">Deepwater Predictive Maintenance & Digital Twin Operations</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-6 text-slate-400 text-xs">
+          <a href="/app/" class="hover:text-cyan-300 transition-colors">Launch Live Demo</a>
+          <a href="/SubseaGuard_AI_User_Guide.pdf" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-300 transition-colors">Documentation (PDF)</a>
+          <a href="https://github.com/ROAESUBMARS/subsea-ai-predictive-maintenance" target="_blank" rel="noopener noreferrer" class="hover:text-cyan-300 transition-colors">GitHub Source</a>
+        </div>
+
+        <div class="text-slate-500 text-[11px] font-mono">
+          Engineered by Oluwatobiloba Smithson • 2026 • subseaguard.dev
+        </div>
+
+      </div>
+    </footer>
+
   </body>
 </html>

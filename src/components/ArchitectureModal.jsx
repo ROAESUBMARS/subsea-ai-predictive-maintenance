@@ -147,7 +147,12 @@ export default function ArchitectureModal({ onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-      <div className="glass-panel w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden border border-cyan-500/30 shadow-[0_0_50px_rgba(0,242,254,0.25)]">
+      <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="architecture-modal-title"
+        className="glass-panel w-full max-w-5xl max-h-[92vh] flex flex-col overflow-hidden border border-cyan-500/30 shadow-[0_0_50px_rgba(0,242,254,0.25)]"
+      >
         
         {/* Modal Header */}
         <div className="flex items-center justify-between p-4 border-b border-cyan-500/20 bg-[#050c1b]">
@@ -156,43 +161,49 @@ export default function ArchitectureModal({ onClose }) {
               <Cpu className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-sm font-heading font-extrabold text-white tracking-wider uppercase">
+              <h2 id="architecture-modal-title" className="text-sm font-heading font-extrabold text-white tracking-wider uppercase">
                 5-Stage Subsea AI Architecture & Physics Pipeline
               </h2>
-              <p className="text-[11px] text-slate-400 font-mono">
+              <p className="text-[11px] text-slate-300 font-mono">
                 Sensor Validation → Feature Engineering → Bayesian ML → HITL Inspection → Autonomous Remediation & Compliance
               </p>
             </div>
           </div>
           
           <button 
+            type="button"
             onClick={onClose}
+            aria-label="Close architecture modal"
             className="p-1 rounded text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* 5-Stage Segmented Selector Tabs */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 bg-[#061329] border-b border-slate-800">
+        {/* 5-Stage Segmented Selector Tabs (WAI-ARIA Tablist Pattern) */}
+        <div role="tablist" aria-label="5-stage architecture pipeline" className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 bg-[#061329] border-b border-slate-800">
           {architectureStages.map(stage => {
             const Icon = stage.icon;
             const isActive = activeStage === stage.id;
             return (
               <button
                 key={stage.id}
+                id={`arch-tab-${stage.id}`}
+                role="tab"
+                aria-selected={isActive}
+                type="button"
                 onClick={() => setActiveStage(stage.id)}
                 className={`p-3 text-left border-r border-slate-800/80 transition-all flex flex-col justify-between ${
                   isActive
                     ? 'bg-cyan-500/15 border-b-2 border-b-cyan-400 text-white font-bold'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/40'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className={`text-[10px] font-mono ${isActive ? 'text-cyan-300 font-bold' : 'text-slate-500'}`}>
+                  <span className={`text-[10px] font-mono ${isActive ? 'text-cyan-300 font-bold' : 'text-slate-400'}`}>
                     STAGE {stage.num}
                   </span>
-                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-cyan-400' : 'text-slate-500'}`} />
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-cyan-400' : 'text-slate-400'}`} />
                 </div>
                 <div className="text-xs font-heading line-clamp-1">{stage.title.split('&')[0]}</div>
                 <div className="text-[9px] font-mono text-cyan-400/80 mt-0.5">{stage.badge}</div>
@@ -275,13 +286,14 @@ export default function ArchitectureModal({ onClose }) {
         </div>
 
         {/* Modal Footer */}
-        <div className="p-3.5 border-t border-cyan-500/20 bg-[#050c1b] flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-400">
+        <div className="p-3.5 border-t border-cyan-500/20 bg-[#050c1b] flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-300">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
             <span>API 17D • DNV-RP-F116 • ISO 14224 • DNV-RP-F204 COMPLIANT</span>
           </div>
 
           <button
+            type="button"
             onClick={onClose}
             className="btn-primary text-xs py-1 px-4"
           >

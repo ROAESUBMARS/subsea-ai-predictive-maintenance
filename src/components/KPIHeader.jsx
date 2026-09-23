@@ -51,7 +51,7 @@ export default function KPIHeader({ latestData, onSelectAsset }) {
       {/* 1. Fleet Subsea Flowline & Riser Health Index */}
       <div className="glass-panel p-4 flex flex-col justify-between relative overflow-hidden">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-sans text-slate-400">Flowline & riser health</span>
+          <span className="text-xs font-sans text-slate-300">Flowline & riser health</span>
           <span className={`badge ${
             avgHealth >= 90 ? 'badge-normal' : avgHealth >= 70 ? 'badge-warning' : 'badge-critical'
           }`}>
@@ -63,7 +63,7 @@ export default function KPIHeader({ latestData, onSelectAsset }) {
           <span className="text-3xl font-heading font-extrabold text-white tracking-tight tabular-nums">
             {avgHealth}%
           </span>
-          <span className="text-xs text-slate-400 font-sans">fleet avg</span>
+          <span className="text-xs text-slate-300 font-sans">fleet avg</span>
         </div>
 
         <div className="w-full bg-slate-800/80 rounded-full h-1.5 overflow-hidden">
@@ -77,7 +77,7 @@ export default function KPIHeader({ latestData, onSelectAsset }) {
           />
         </div>
 
-        <div className="mt-2 text-[11px] text-slate-400 flex items-center justify-between font-sans">
+        <div className="mt-2 text-[11px] text-slate-300 flex items-center justify-between font-sans">
           <span>6 deepwater lines</span>
           <span className="text-emerald-400 font-mono tabular-nums flex items-center gap-0.5">
             <ArrowUpRight className="w-3 h-3" /> +1.1% vs 7d
@@ -90,8 +90,8 @@ export default function KPIHeader({ latestData, onSelectAsset }) {
         criticalCount > 0 ? 'glass-panel-crit' : warningCount > 0 ? 'glass-panel-warn' : ''
       }`}>
         <div className="flex items-center justify-between">
-          <span className="text-xs font-sans text-slate-400">AI anomaly alerts</span>
-          <AlertOctagon className={`w-4 h-4 ${criticalCount > 0 ? 'text-rose-400 animate-pulse' : 'text-slate-500'}`} />
+          <span className="text-xs font-sans text-slate-300">AI anomaly alerts</span>
+          <AlertOctagon className={`w-4 h-4 ${criticalCount > 0 ? 'text-rose-400 animate-pulse' : 'text-slate-400'}`} />
         </div>
 
         <div className="my-2 flex items-baseline gap-3">
@@ -106,7 +106,7 @@ export default function KPIHeader({ latestData, onSelectAsset }) {
           <span className="text-slate-600 font-mono">/</span>
           <div className="flex items-baseline gap-1">
             <span className={`text-2xl font-heading font-bold tabular-nums ${
-              warningCount > 0 ? 'text-amber-400' : 'text-slate-400'
+              warningCount > 0 ? 'text-amber-400' : 'text-slate-300'
             }`}>
               {warningCount}
             </span>
@@ -114,7 +114,7 @@ export default function KPIHeader({ latestData, onSelectAsset }) {
           </div>
         </div>
 
-        <div className="text-[11px] text-slate-400 flex items-center justify-between font-sans">
+        <div className="text-[11px] text-slate-300 flex items-center justify-between font-sans">
           <span>Safety status:</span>
           <span className={`font-mono ${criticalCount > 0 ? 'text-rose-400 font-bold' : 'text-emerald-400'}`}>
             {criticalCount > 0 ? 'Active anomaly' : 'All clear'}
@@ -125,7 +125,7 @@ export default function KPIHeader({ latestData, onSelectAsset }) {
       {/* 3. Minimum RUL & Wall Thickness */}
       <div className="glass-panel p-4 flex flex-col justify-between">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-sans text-slate-400">Min RUL & pipe wall</span>
+          <span className="text-xs font-sans text-slate-300">Min RUL & pipe wall</span>
           <Clock className="w-4 h-4 text-cyan-400" />
         </div>
 
@@ -135,12 +135,12 @@ export default function KPIHeader({ latestData, onSelectAsset }) {
           }`}>
             {minRulDays}
           </span>
-          <span className="text-xs text-slate-400 font-sans">
-            days <span className="font-mono text-slate-500">({rulHours.toLocaleString()} h)</span>
+          <span className="text-xs text-slate-300 font-sans">
+            days <span className="font-mono text-slate-400">({rulHours.toLocaleString()} h)</span>
           </span>
         </div>
 
-        <div className="text-[11px] text-slate-400 flex items-center justify-between font-sans">
+        <div className="text-[11px] text-slate-300 flex items-center justify-between font-sans">
           <span>Min wall ({minRulAsset}):</span>
           <span className={`font-mono tabular-nums ${minWallMm < 18 ? 'text-rose-400 font-bold' : 'text-slate-200'}`}>
             {minWallMm?.toFixed(1)} mm
@@ -153,7 +153,7 @@ export default function KPIHeader({ latestData, onSelectAsset }) {
         pflAsset.hydrateMarginDeltaTC < 0 ? 'glass-panel-crit' : ''
       }`}>
         <div className="flex items-center justify-between">
-          <span className="text-xs font-sans text-slate-400">Hydrate safety margin</span>
+          <span className="text-xs font-sans text-slate-300">Hydrate safety margin</span>
           <Thermometer className="w-4 h-4 text-amber-400" />
         </div>
 
@@ -163,10 +163,10 @@ export default function KPIHeader({ latestData, onSelectAsset }) {
           }`}>
             {pflAsset.hydrateMarginDeltaTC > 0 ? `+${pflAsset.hydrateMarginDeltaTC?.toFixed(1)}` : pflAsset.hydrateMarginDeltaTC?.toFixed(1)}°C
           </span>
-          <span className="text-xs text-slate-400 font-sans">ΔT subcooling</span>
+          <span className="text-xs text-slate-300 font-sans">ΔT subcooling</span>
         </div>
 
-        <div className="text-[11px] text-slate-400 flex items-center justify-between font-sans">
+        <div className="text-[11px] text-slate-300 flex items-center justify-between font-sans">
           <span>Dynamic MEG dosing:</span>
           <span className="text-amber-300 font-mono tabular-nums font-bold">
             {pflAsset.megInjectionRateLh || 38} L/h
@@ -177,7 +177,7 @@ export default function KPIHeader({ latestData, onSelectAsset }) {
       {/* 5. Condition-Based Inspection Cost Savings */}
       <div className="glass-panel p-4 flex flex-col justify-between">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-sans text-slate-400">CBI OPEX reduction</span>
+          <span className="text-xs font-sans text-slate-300">CBI OPEX reduction</span>
           <DollarSign className="w-4 h-4 text-emerald-400" />
         </div>
 
@@ -185,10 +185,10 @@ export default function KPIHeader({ latestData, onSelectAsset }) {
           <span className="text-3xl font-heading font-extrabold text-emerald-400 tabular-nums">
             ${((cbiData.totalCostAvoidanceUsd || 3836000) / 1000000).toFixed(2)}M
           </span>
-          <span className="text-xs text-slate-400 font-sans">YTD saved</span>
+          <span className="text-xs text-slate-300 font-sans">YTD saved</span>
         </div>
 
-        <div className="text-[11px] text-slate-400 flex items-center justify-between font-sans">
+        <div className="text-[11px] text-slate-300 flex items-center justify-between font-sans">
           <span>Avoided vessel time:</span>
           <span className="text-emerald-400 font-mono tabular-nums font-bold">
             {cbiData.daysSavedYtd || 28} ROV days

@@ -36,7 +36,12 @@ export default function ReportGeneratorModal({ latestData, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-      <div className="glass-panel w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden border border-cyan-500/30 shadow-[0_0_50px_rgba(0,242,254,0.25)]">
+      <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="report-modal-title"
+        className="glass-panel w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden border border-cyan-500/30 shadow-[0_0_50px_rgba(0,242,254,0.25)]"
+      >
         
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-cyan-500/20 bg-[#050c1b]">
@@ -45,35 +50,40 @@ export default function ReportGeneratorModal({ latestData, onClose }) {
               <FileText className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-heading font-bold text-white tracking-wide">
+              <h2 id="report-modal-title" className="text-base font-heading font-bold text-white tracking-wide">
                 Regulatory Compliance & Subsea Integrity Audit Report
               </h2>
-              <p className="text-xs text-slate-400 font-mono">
+              <p className="text-xs text-slate-300 font-mono">
                 ISO 14224 (Reliability & Maintenance Data) • API 17D • DNV-RP-F116 (RBI)
               </p>
             </div>
           </div>
 
           <button
+            type="button"
             onClick={onClose}
+            aria-label="Close audit report modal"
             className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Standard Selector Filter Strip */}
+        {/* Standard Selector Filter Strip (WAI-ARIA Radio Group) */}
         <div className="px-6 py-2 bg-[#061329] border-b border-slate-800 flex items-center justify-between text-xs font-mono">
-          <span className="text-slate-400">REPORTING STANDARD SCHEMA:</span>
-          <div className="flex items-center gap-1.5">
+          <span className="text-slate-300">REPORTING STANDARD SCHEMA:</span>
+          <div role="radiogroup" aria-label="Reporting standard schema" className="flex items-center gap-1.5">
             {['ISO_14224', 'API_17D', 'DNV_RP_F116'].map(std => (
               <button
                 key={std}
+                type="button"
+                role="radio"
+                aria-checked={reportStandard === std}
                 onClick={() => setReportStandard(std)}
                 className={`px-3 py-1 rounded transition-all ${
                   reportStandard === std
                     ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-bold'
-                    : 'text-slate-400 hover:text-slate-200'
+                    : 'text-slate-300 hover:text-white'
                 }`}
               >
                 {std.replace(/_/g, '-')}
@@ -168,7 +178,7 @@ export default function ReportGeneratorModal({ latestData, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-cyan-500/20 bg-[#050c1b] flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-400">
+        <div className="p-4 border-t border-cyan-500/20 bg-[#050c1b] flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-slate-300">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
             <span>DIGITALLY SIGNED & HASHED • SHA-256 AUDIT VERIFIED</span>

@@ -352,7 +352,7 @@ export default function SubseaMapCanvas({
             <Compass className="w-4 h-4 text-cyan-400" />
             2.5D Subsea Bathymetric Digital Twin (Flowlines, Risers & Touchdown Zones)
           </h3>
-          <p className="text-xs text-slate-400 font-mono">
+          <p className="text-xs text-slate-300 font-mono">
             Interactive deepwater ocean floor terrain (-1,850m) with live multiphase flowlines, catenary dynamics & ROV tracking.
           </p>
         </div>
@@ -360,20 +360,29 @@ export default function SubseaMapCanvas({
         {/* Layer Toggles */}
         <div className="flex items-center gap-1.5 bg-[#050e20] p-1 rounded-lg border border-cyan-500/20 text-xs font-mono">
           <button
+            type="button"
+            aria-pressed={layers.flowlines}
+            aria-label="Toggle flowlines layer"
             onClick={() => setLayers(l => ({ ...l, flowlines: !l.flowlines }))}
-            className={`px-2 py-1 rounded ${layers.flowlines ? 'bg-cyan-500/20 text-cyan-300' : 'text-slate-500'}`}
+            className={`px-2 py-1 rounded transition-colors ${layers.flowlines ? 'bg-cyan-500/20 text-cyan-300 font-semibold' : 'text-slate-300 hover:text-white'}`}
           >
             Flowlines
           </button>
           <button
+            type="button"
+            aria-pressed={layers.riserCatenary}
+            aria-label="Toggle SCR riser catenary layer"
             onClick={() => setLayers(l => ({ ...l, riserCatenary: !l.riserCatenary }))}
-            className={`px-2 py-1 rounded ${layers.riserCatenary ? 'bg-purple-500/20 text-purple-300' : 'text-slate-500'}`}
+            className={`px-2 py-1 rounded transition-colors ${layers.riserCatenary ? 'bg-purple-500/20 text-purple-300 font-semibold' : 'text-slate-300 hover:text-white'}`}
           >
             SCR Riser
           </button>
           <button
+            type="button"
+            aria-pressed={layers.rovPatrol}
+            aria-label="Toggle ROV patrol trajectory layer"
             onClick={() => setLayers(l => ({ ...l, rovPatrol: !l.rovPatrol }))}
-            className={`px-2 py-1 rounded ${layers.rovPatrol ? 'bg-amber-500/20 text-amber-300' : 'text-slate-500'}`}
+            className={`px-2 py-1 rounded transition-colors ${layers.rovPatrol ? 'bg-amber-500/20 text-amber-300 font-semibold' : 'text-slate-300 hover:text-white'}`}
           >
             ROV Patrol
           </button>

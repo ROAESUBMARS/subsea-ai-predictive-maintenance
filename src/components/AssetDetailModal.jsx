@@ -36,7 +36,12 @@ export default function AssetDetailModal({ assetId, latestData, onClose, onNavig
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-      <div className="glass-panel w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden border border-cyan-500/30 shadow-[0_0_50px_rgba(0,242,254,0.2)]">
+      <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="asset-modal-title"
+        className="glass-panel w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden border border-cyan-500/30 shadow-[0_0_50px_rgba(0,242,254,0.2)]"
+      >
         
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-cyan-500/20 bg-[#050c1b]">
@@ -46,7 +51,7 @@ export default function AssetDetailModal({ assetId, latestData, onClose, onNavig
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-heading font-bold text-white tracking-wide">
+                <h2 id="asset-modal-title" className="text-base font-heading font-bold text-white tracking-wide">
                   {assetMeta.name}
                 </h2>
                 <span className="badge badge-cyan text-[10px] font-mono py-0.5 px-2">
@@ -59,14 +64,16 @@ export default function AssetDetailModal({ assetId, latestData, onClose, onNavig
                   {telemetry.status}
                 </span>
               </div>
-              <p className="text-xs text-slate-400 font-mono mt-0.5">
+              <p className="text-xs text-slate-300 font-mono mt-0.5">
                 {assetMeta.type} • DEPTH: -{assetMeta.depth}m • LENGTH: {assetMeta.lengthKm} km
               </p>
             </div>
           </div>
 
           <button
+            type="button"
             onClick={onClose}
+            aria-label="Close asset details modal"
             className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
           >
             <X className="w-5 h-5" />
@@ -84,19 +91,19 @@ export default function AssetDetailModal({ assetId, latestData, onClose, onNavig
           {/* Key Specs Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="p-3 rounded-lg bg-[#050e20] border border-cyan-500/10">
-              <span className="text-slate-400 text-[10px]">OUTER DIAMETER</span>
+              <span className="text-slate-300 text-[10px]">OUTER DIAMETER</span>
               <div className="text-white font-bold text-sm mt-1">{assetMeta.outerDiameterInches}"</div>
             </div>
             <div className="p-3 rounded-lg bg-[#050e20] border border-cyan-500/10">
-              <span className="text-slate-400 text-[10px]">WALL THICKNESS</span>
+              <span className="text-slate-300 text-[10px]">WALL THICKNESS</span>
               <div className="text-emerald-400 font-bold text-sm mt-1">{telemetry.wallThicknessMm?.toFixed(1)} mm</div>
             </div>
             <div className="p-3 rounded-lg bg-[#050e20] border border-cyan-500/10">
-              <span className="text-slate-400 text-[10px]">DESIGN PRESSURE</span>
+              <span className="text-slate-300 text-[10px]">DESIGN PRESSURE</span>
               <div className="text-cyan-300 font-bold text-sm mt-1">{assetMeta.designPressureBar} bar</div>
             </div>
             <div className="p-3 rounded-lg bg-[#050e20] border border-cyan-500/10">
-              <span className="text-slate-400 text-[10px]">PREDICTED RUL</span>
+              <span className="text-slate-300 text-[10px]">PREDICTED RUL</span>
               <div className="text-purple-300 font-bold text-sm mt-1">{telemetry.rulDays} days</div>
             </div>
           </div>
@@ -108,7 +115,7 @@ export default function AssetDetailModal({ assetId, latestData, onClose, onNavig
                 <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
                 Subsea Integrity Operations
               </div>
-              <p className="text-[11px] text-slate-400 font-sans mt-0.5">
+              <p className="text-[11px] text-slate-300 font-sans mt-0.5">
                 Inspect 3D physical FEM mesh or deploy autonomous ROV to this location.
               </p>
             </div>
@@ -171,7 +178,7 @@ export default function AssetDetailModal({ assetId, latestData, onClose, onNavig
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-cyan-500/20 bg-[#050c1b] flex items-center justify-between text-xs font-mono text-slate-400">
+        <div className="p-4 border-t border-cyan-500/20 bg-[#050c1b] flex items-center justify-between text-xs font-mono text-slate-300">
           <span>DNV-OS-F101 / API 17D VERIFIED</span>
           <button
             onClick={onClose}

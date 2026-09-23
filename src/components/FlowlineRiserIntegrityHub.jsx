@@ -375,26 +375,34 @@ export default function FlowlineRiserIntegrityHub({
             </div>
 
             <div className="flex items-center gap-1.5 text-xs font-mono">
-              <span className="text-slate-400">Simulate Anomaly:</span>
+              <span className="text-slate-300">Simulate Anomaly:</span>
               <button
+                type="button"
+                aria-label="Simulate hydrate risk anomaly"
                 onClick={() => onSelectScenario('HYDRATE_RISK')}
                 className="px-2 py-1 rounded bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px]"
               >
                 Hydrate
               </button>
               <button
+                type="button"
+                aria-label="Simulate touchdown fatigue VIV anomaly"
                 onClick={() => onSelectScenario('TOUCHDOWN_FATIGUE')}
                 className="px-2 py-1 rounded bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/30 text-[10px]"
               >
                 VIV / TDZ
               </button>
               <button
+                type="button"
+                aria-label="Simulate micro-leak anomaly"
                 onClick={() => onSelectScenario('MICRO_LEAK')}
                 className="px-2 py-1 rounded bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[10px]"
               >
                 Micro-Leak
               </button>
               <button
+                type="button"
+                aria-label="Reset simulation scenario to nominal"
                 onClick={() => onSelectScenario('NORMAL')}
                 className="px-2 py-1 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px]"
               >
