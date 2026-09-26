@@ -195,18 +195,31 @@ When an anomaly occurs, an explanatory diagnostics panel breaks down:
 ## 📂 7. Project Structure
 
 ```
+├── .github/workflows/ci.yml       # GitHub Actions automated CI matrix (Node 20.x, 22.x)
 ├── METHODOLOGY.md                 # Full engineering whitepaper & mathematical derivations
+├── LINKEDIN_ARTICLE.md            # Publication-grade technical engineering article
+├── WALKTHROUGH.md                 # Master Engineering Walkthrough (Phases 1, 2, 3 & 4)
 ├── README.md                      # Primary project overview & architecture specification
-├── index.html                     # HTML5 entry with industrial typography & metadata
+├── index.html                     # Pre-rendered static landing page & recruiter portal (Zero JS)
+├── app/
+│   └── index.html                 # Operational console entry point (React 18 SPA)
 ├── package.json                   # Dependencies (React 18, Vite 5, TailwindCSS, Chart.js)
+├── tailwind.config.js             # Industrial design tokens, colors & typography
+├── postcss.config.js              # PostCSS plugins (Tailwind, Autoprefixer)
+├── vite.config.js                 # Multi-page build & /app/ internal rewrite routing plugin
 ├── vercel.json                    # Vercel deployment config & strict security headers
+├── tests/
+│   ├── physics.test.js            # Node native unit tests for Paris LEFM, UQ & hydrate boundary
+│   └── scenarios.test.js          # Node native tests for telemetry scenarios & HITL gate
 ├── public/
+│   ├── manifest.json              # PWA Web App Manifest (standalone, offline ready)
+│   ├── sw.js                      # Service Worker for stale-while-revalidate offline caching
 │   ├── robots.txt                 # Search crawler indexing rules
 │   ├── sitemap.xml                # Canonical XML sitemap with /methodology
 │   └── og.png                     # 1200x630 high-resolution social share card
 └── src/
     ├── App.jsx                    # Root client-side SPA routing & state coordinator
-    ├── index.css                  # Tailwind directives & industrial subsea design tokens
+    ├── index.css                  # Tailwind directives, dark theme tokens & reduced-motion rules
     ├── components/
     │   ├── MethodologyView.jsx    # Engineering whitepaper page with interactive plots
     │   ├── ScenarioAnnotationPanel.jsx # "Why the model flagged this" explainability panel
@@ -222,8 +235,13 @@ When an anomaly occurs, an explanatory diagnostics panel breaks down:
     │   ├── ConditionBasedInspectionROI.jsx    # $3.83M OPEX savings & carbon reduction
     │   ├── ROVDeploymentHub.jsx               # Work order dispatch & dive checklists
     │   ├── AlertingAndEscalationHub.jsx       # Tiered alarms & automated escalation
+    │   ├── ReportGeneratorModal.jsx           # ISO 14224:2016 JSON dossier & print exporter
+    │   ├── ArchitectureModal.jsx              # 5-stage edge-to-cloud pipeline diagram
+    │   ├── AssetDetailModal.jsx               # Subsea equipment node telemetry inspection
+    │   ├── NotFound.jsx                       # Industrial glassmorphic 404 route link
     │   └── Navbar.jsx                         # Sticky header with scenario & role switchers
     └── services/
+        ├── fractureMechanics.js   # BS 7910 Paris-Erdogan numerical crack solver & UQ
         └── telemetryEngine.js     # Physics simulation engine, UQ, and scenario states
 ```
 

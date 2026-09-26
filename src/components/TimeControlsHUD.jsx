@@ -6,11 +6,7 @@ import {
   FastForward,
   Rewind,
   Clock,
-  Radio,
-  Sliders,
-  Sparkles,
-  Zap,
-  ArrowRight
+  Radio
 } from 'lucide-react';
 import { telemetryEngine } from '../services/telemetryEngine';
 
@@ -121,7 +117,7 @@ export default function TimeControlsHUD({
 
       {/* Center: Timeline Scrubber Slider */}
       <div className="flex-1 min-w-[200px] flex items-center gap-3">
-        <div className="text-[11px] text-slate-400 shrink-0 flex items-center gap-1 font-mono">
+        <div className="text-[11px] text-slate-300 shrink-0 flex items-center gap-1 font-mono">
           <Clock className="w-3.5 h-3.5 text-cyan-400" />
           <span>TICK <strong className="text-white">{currentTick}</strong></span>
         </div>
@@ -138,7 +134,7 @@ export default function TimeControlsHUD({
           />
         </div>
 
-        <div className="text-[10px] text-slate-400 shrink-0 font-mono">
+        <div className="text-[10px] text-slate-300 shrink-0 font-mono">
           {snapshotCount > 1 ? `${scrubberValue + 1}/${snapshotCount} FRAMES` : 'RECORDING...'}
         </div>
       </div>
@@ -164,7 +160,7 @@ export default function TimeControlsHUD({
         <button
           onClick={() => telemetryEngine.resetSimulation()}
           title="Reset simulation to initial baseline"
-          className="p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-white transition-colors"
+          className="p-1.5 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition-colors"
           aria-label="Reset simulation telemetry"
         >
           <RotateCcw className="w-3.5 h-3.5" />
