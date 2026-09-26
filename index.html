@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#00f2fe" />
     
     <!-- Primary Page Title & SEO Meta -->
     <title>SubseaGuard AI | Deepwater Predictive Maintenance & Digital Twin Operations</title>
@@ -587,5 +589,15 @@
       </div>
     </footer>
 
+    <!-- Offline PWA Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => {
+            console.debug('ServiceWorker registration optional notice:', err);
+          });
+        });
+      }
+    </script>
   </body>
 </html>

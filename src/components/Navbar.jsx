@@ -5,9 +5,11 @@ import {
   Anchor,
   BarChart3,
   Bell,
+  BookOpen,
   Camera,
   CheckCircle2,
   ChevronDown,
+  Compass,
   Cpu,
   DollarSign,
   Download,
@@ -41,7 +43,8 @@ export default function Navbar({
   unacknowledgedAlertsCount = 0,
   userRole,
   onSelectRole,
-  latestData
+  latestData,
+  onOpenGuidedTour
 }) {
   const [secondsAgo, setSecondsAgo] = useState(2);
   const [lastSyncUtc, setLastSyncUtc] = useState('14:32:07 UTC');
@@ -64,13 +67,19 @@ export default function Navbar({
     return () => clearInterval(timer);
   }, []);
 
-  // Primary 6 high-level stages
+  // Primary 7 high-level stages
   const primaryTabs = [
     {
       id: 'control-room',
       label: 'Overview (5 Zones)',
       badge: 'DELFI Standard',
       icon: LayoutDashboard
+    },
+    {
+      id: 'methodology',
+      label: 'Methodology & Physics',
+      badge: 'Whitepaper',
+      icon: BookOpen
     },
     {
       id: 'condition-monitoring',
@@ -283,6 +292,17 @@ export default function Navbar({
               }`}
             >
               {soundEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+            </button>
+
+            {/* 90-Second Guided Tour Mode */}
+            <button
+              onClick={onOpenGuidedTour}
+              aria-label="Start 90-second guided engineering walkthrough"
+              className="px-2.5 py-1 rounded-lg bg-gradient-to-r from-purple-500/20 to-cyan-500/20 hover:from-purple-500/35 hover:to-cyan-500/35 text-white border border-purple-400/40 text-xs font-sans font-bold transition-all flex items-center gap-1.5 shadow-[0_0_12px_rgba(168,85,247,0.2)]"
+            >
+              <Compass className="w-3.5 h-3.5 text-cyan-300 animate-spin-slow" />
+              <span className="hidden sm:inline">Guided tour</span>
+              <span className="text-[10px] font-mono text-purple-300">90s</span>
             </button>
 
             {/* Architecture Modal */}

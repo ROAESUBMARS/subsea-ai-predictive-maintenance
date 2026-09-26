@@ -9,6 +9,7 @@ const VALID_ROUTES = {
   '': 'control-room',
   '/': 'control-room',
   '/control-room': 'control-room',
+  '/methodology': 'methodology',
   '/condition-monitoring': 'condition-monitoring',
   '/digital-twin': 'digital-twin',
   '/rov-deployment': 'rov-deployment',
@@ -48,6 +49,10 @@ const RiserFatigueStructuralHealth = lazy(() => import('./components/RiserFatigu
 const EarlyLeakDetectionHub = lazy(() => import('./components/EarlyLeakDetectionHub'));
 const AlertingAndEscalationHub = lazy(() => import('./components/AlertingAndEscalationHub'));
 const ConditionBasedInspectionROI = lazy(() => import('./components/ConditionBasedInspectionROI'));
+const MethodologyView = lazy(() => import('./components/MethodologyView'));
+const ScenarioAnnotationPanel = lazy(() => import('./components/ScenarioAnnotationPanel'));
+const TimeControlsHUD = lazy(() => import('./components/TimeControlsHUD'));
+const GuidedTourModal = lazy(() => import('./components/GuidedTourModal'));
 const AssetDetailModal = lazy(() => import('./components/AssetDetailModal'));
 const ReportGeneratorModal = lazy(() => import('./components/ReportGeneratorModal'));
 const ArchitectureModal = lazy(() => import('./components/ArchitectureModal'));
@@ -80,6 +85,8 @@ export default function App() {
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [isArchitectureOpen, setIsArchitectureOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [isGuidedTourOpen, setIsGuidedTourOpen] = useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [soundEnabled, setSoundEnabled] = useState(false);
 
   const audioCtxRef = useRef(null);
@@ -120,14 +127,15 @@ export default function App() {
     return () => unsubscribe();
   }, [soundEnabled]);
 
-  // Simulation tick timer (1.5 seconds per tick)
+  // Simulation tick timer (adjusted by playbackSpeed)
   useEffect(() => {
     if (!isPlaying) return;
+    const intervalMs = Math.max(100, Math.round(1500 / playbackSpeed));
     const interval = setInterval(() => {
       telemetryEngine.step();
-    }, 1500);
+    }, intervalMs);
     return () => clearInterval(interval);
-  }, [isPlaying]);
+  }, [isPlaying, playbackSpeed]);
 
   const handleScenarioChange = (scenarioKey) => {
     setCurrentScenario(scenarioKey);
@@ -199,6 +207,7 @@ export default function App() {
         userRole={userRole}
         onSelectRole={setUserRole}
         latestData={latestData}
+        onOpenGuidedTour={() => setIsGuidedTourOpen(true)}
       />
 
       {/* Simulation Mode Active Banner */}
@@ -234,11 +243,31 @@ export default function App() {
           />
         ) : (
           <>
+            {/* Interactive Timeline Scrubber & Speed HUD */}
+            <Suspense fallback={null}>
+              <TimeControlsHUD
+                isPlaying={isPlaying}
+                onTogglePlay={() => setIsPlaying(!isPlaying)}
+                playbackSpeed={playbackSpeed}
+                onSelectSpeed={setPlaybackSpeed}
+                latestData={latestData}
+              />
+            </Suspense>
+
             {/* KPI Executive Summary Header (Sentence-case + Tabular Numerals) */}
             <KPIHeader
               latestData={latestData}
               onSelectAsset={handleSelectAsset}
             />
+
+            {/* Scenario Annotation & Physics Explainability Banner */}
+            <Suspense fallback={null}>
+              <ScenarioAnnotationPanel
+                currentScenario={currentScenario}
+                latestData={latestData}
+                onNavigateTab={handleSelectTab}
+              />
+            </Suspense>
 
             {/* Tailored Persona View for Technician or Manager */}
             {userRole !== 'engineer' && (
@@ -279,6 +308,13 @@ export default function App() {
                     selectedKP={selectedKP}
                     onSelectKP={setSelectedKP}
                   />
+                </div>
+              )}
+
+              {/* Engineering Methodology Whitepaper & Physics Foundations */}
+              {activeTab === 'methodology' && (
+                <div className="animate-fade-in">
+                  <MethodologyView onNavigateTab={handleSelectTab} />
                 </div>
               )}
 
@@ -435,6 +471,17 @@ export default function App() {
           <ReportGeneratorModal
             latestData={latestData}
             onClose={() => setIsReportOpen(false)}
+          />
+        )}
+
+        {isGuidedTourOpen && (
+          <GuidedTourModal
+            isOpen={isGuidedTourOpen}
+            onClose={() => setIsGuidedTourOpen(false)}
+            currentScenario={currentScenario}
+            onSelectScenario={handleScenarioChange}
+            onSelectAsset={handleSelectAsset}
+            onNavigateTab={handleSelectTab}
           />
         )}
       </Suspense>

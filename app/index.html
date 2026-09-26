@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#00f2fe" />
     
     <!-- Primary Page Title & Meta -->
     <title>SubseaGuard AI | Operational Console & Digital Twin</title>
@@ -18,5 +20,16 @@
   <body class="bg-[#080d1a] text-slate-100 font-sans antialiased selection:bg-cyan-500 selection:text-white">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Offline PWA Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => {
+            console.debug('ServiceWorker registration notice:', err);
+          });
+        });
+      }
+    </script>
   </body>
 </html>
